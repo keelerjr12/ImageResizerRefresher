@@ -131,6 +131,60 @@ TEST(filled_matrix_element_last_column_return_last_column) {
     delete mat;
 }
 
+// Verify that Matrix_at changes value 
+TEST(filled_matrix_changing_value_returns_changed_value) {
+    Matrix *mat = new Matrix; 
+    const int width = 3;
+    const int height = 5;
+    const int value = 2;
+    const int changed_val = 3;
+  
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, value);
+    *Matrix_at(mat, height-1, width-1) = changed_val;
+
+    ASSERT_EQUAL(*Matrix_at(mat, height-1, width-1), changed_val);
+    delete mat;
+}
+
+// Check that border was filled
+TEST(filled_matrix_fill_border) {
+    const int width = 3;
+    const int height = 4;
+    const int value = 2;
+  
+    Matrix *mat = new Matrix; 
+    Matrix_init(mat, width, height);
+    Matrix_fill_border(mat, value);
+
+    Matrix *correct_mat = new Matrix;
+    Matrix_init(correct_mat, width, height);
+
+    // top border
+    for (auto col = 0; col < width; ++col) {
+        *Matrix_at(correct_mat, 0, col) = value;
+    }
+        
+    // left border
+    for (auto row = 0; row < height; ++row) {
+        *Matrix_at(correct_mat, row, 0) = value;
+    }
+
+    // right border
+    for (auto row = 0; row < height; ++row) {
+        *Matrix_at(correct_mat, row, width-1) = value;
+    }
+
+    // bottom border
+    for (auto col = 0; col < width; ++col) {
+        *Matrix_at(correct_mat, height-1, col) = value;
+    }
+
+    ASSERT_EQUAL(Matrix_equal(mat, correct_mat), true);
+
+    delete mat;
+}
+
 // Return max value
 TEST(filled_matrix_return_max_element) {
     Matrix *mat = new Matrix; 
@@ -139,6 +193,7 @@ TEST(filled_matrix_return_max_element) {
   
     Matrix_init(mat, width, height);
     Matrix_fill(mat, 5);
+
     *Matrix_at(mat, height/2, width/2) = 10;
     *Matrix_at(mat, 0, width-1) = 40;
     *Matrix_at(mat, height-1, 0) = 30;
