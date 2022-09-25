@@ -28,7 +28,17 @@ void Matrix_init(Matrix* mat, int width, int height) {
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
 void Matrix_print(const Matrix* mat, std::ostream& os) {
-  assert(false); // TODO Replace with your implementation!
+    assert(mat);
+
+    os << mat->width << " " <<  mat->height << std::endl;
+
+    for (auto row = 0; row < mat->height; ++row) {
+        for (auto col = 0; col < mat->width; ++col) {
+            os << mat->data[row * mat->width + col] << " ";
+        }
+
+        os << std::endl;
+    }
 }
 
 // REQUIRES: mat points to an valid Matrix

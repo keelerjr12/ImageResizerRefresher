@@ -3,6 +3,8 @@
 #include "Matrix.h"
 #include "Matrix_test_helpers.h"
 #include "unit_test_framework.h"
+#include <cstring>
+#include <sstream>
 
 using namespace std;
 
@@ -24,6 +26,29 @@ TEST(test_fill_basic) {
   }
 
   delete mat; // delete the Matrix
+}
+
+// 
+// 
+TEST(ones_matrix_print) {
+    auto CORRECT_STR = "2 3\n1 1 \n1 1 \n1 1 \n";
+
+    const int width = 2;
+    const int height = 3;
+    const int value = 1;
+
+    Matrix *mat = new Matrix; // create a Matrix in dynamic memory
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, value);
+
+    std::ostringstream os;
+    Matrix_print(mat, os);
+
+    auto is_equal =  strncmp(os.str().c_str(), CORRECT_STR, os.str().size());
+
+    ASSERT_EQUAL(is_equal, 0);
+
+    delete mat; // delete the Matrix
 }
 
 // Initialize matrix and query the given width

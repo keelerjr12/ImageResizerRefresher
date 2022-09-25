@@ -7,52 +7,57 @@ CXX ?= g++
 # Compiler flags
 CXXFLAGS ?= --std=c++11 -Wall -Werror -pedantic -g -Wno-sign-compare -Wno-comment
 
+# Directories
+SRC ?= src
+BIN ?= bin
+DATA ?= data
+
 # Run a regression test
 test: Matrix_public_test.exe Matrix_tests.exe Image_public_test.exe Image_tests.exe processing_public_tests.exe resize.exe
-	./Matrix_public_test.exe
-	./Image_public_test.exe
-	./processing_public_tests.exe
-	./resize.exe dog.ppm dog_4x5.out.ppm 4 5
-	diff dog_4x5.out.ppm dog_4x5.correct.ppm
+	./$(BIN)/Matrix_public_test.exe
+	./$(BIN)/Image_public_test.exe
+	./$(BIN)/processing_public_tests.exe
+	./$(BIN)/resize.exe $(DATA)/dog.ppm $(DATA)/dog_4x5.out.ppm 4 5
+	diff $(DATA)/dog_4x5.out.ppm $(DATA)/dog_4x5.correct.ppm
 
-Matrix_public_test.exe: Matrix_public_test.cpp Matrix.cpp Matrix_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+Matrix_public_test.exe: $(SRC)/Matrix_public_test.cpp $(SRC)/Matrix.cpp $(SRC)/Matrix_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
-Matrix_tests.exe: Matrix_tests.cpp Matrix.cpp Matrix_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+Matrix_tests.exe: $(SRC)/Matrix_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Matrix_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
-Image_public_test.exe: Image_public_test.cpp Matrix.cpp Image.cpp \
-			Matrix_test_helpers.cpp Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+Image_public_test.exe: $(SRC)/Image_public_test.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp \
+			$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
-Image_tests.exe: Image_tests.cpp Matrix.cpp Image.cpp Matrix_test_helpers.cpp \
-			Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+Image_tests.exe: $(SRC)/Image_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/Matrix_test_helpers.cpp \
+			$(SRC)/Image_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
-processing_public_tests.exe: processing_public_tests.cpp Matrix.cpp \
-				Image.cpp processing.cpp \
-				Matrix_test_helpers.cpp Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+processing_public_tests.exe: $(SRC)/processing_public_tests.cpp $(SRC)/Matrix.cpp \
+				$(SRC)/Image.cpp $(SRC)/processing.cpp \
+				$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
-resize.exe: resize.cpp Matrix.cpp Image.cpp processing.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $@
+resize.exe: $(SRC)/resize.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/processing.cpp
+	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
 # Disable built-in Makefile rules
 .SUFFIXES:
 
 clean:
-	rm -rvf *.exe *.out.txt *.out.ppm *.dSYM *.stackdump
+	rm -rvf $(BIN)/*.exe $(BIN)/*.out.txt $(BIN)/*.out.ppm $(BIN)/*.dSYM $(BIN)/*.stackdump
 
 # Run style check tools
 CPD ?= /usr/um/pmd-6.0.1/bin/run.sh cpd
 OCLINT ?= /usr/um/oclint-0.13/bin/oclint
 FILES := \
-  Image.cpp \
-  Image_tests.cpp \
-  Matrix.cpp \
-  Matrix_tests.cpp \
-  processing.cpp \
-  resize.cpp
+  $(SRC)/Image.cpp \
+  $(SRC)/Image_tests.cpp \
+  $(SRC)/Matrix.cpp \
+  $(SRC)/Matrix_tests.cpp \
+  $(SRC)/processing.cpp \
+  $(SRC)/resize.cpp
 style :
 	$(OCLINT) \
     -no-analytics \
