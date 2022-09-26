@@ -10,11 +10,6 @@
 
 using namespace std;
 
-
-// Here's a free test for you! Model yours after this one.
-// Test functions have no interface and thus no RMEs, but
-// add a comment like the one here to say what it is testing.
-// -----
 // Sets various pixels in a 2x2 Image and checks
 // that Image_print produces the correct output.
 TEST(test_print_basic) {
@@ -45,13 +40,4 @@ TEST(test_print_basic) {
   delete img; // delete the Image
 }
 
-// IMPLEMENT YOUR TEST FUNCTIONS HERE
-// You are encouraged to use any functions from Image_test_helpers.h as needed.
-
-// NOTE: The unit test framework tutorial in Lab 2 originally
-// had a semicolon after TEST_MAIN(). Although including and
-// excluding the semicolon are both correct according to the c++
-// standard, the version of g++ we are using reports a warning
-// when there is a semicolon. Therefore do NOT add a semicolon
-// after TEST_MAIN()
 TEST_MAIN() // Do NOT put a semicolon here

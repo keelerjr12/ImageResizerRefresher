@@ -204,4 +204,92 @@ TEST(filled_matrix_return_max_element) {
     delete mat;
 }
 
+// Get column when min value in column start
+TEST(min_val_start_return_start_col) {
+    Matrix *mat = new Matrix; 
+    const int width = 8;
+    const int height = 5;
+  
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, 5);
+
+    // fill 1st row with increasing ints
+    for (auto c = 0; c < width; ++c) {
+        *Matrix_at(mat, 0, c) = c;
+    }
+
+    // skip 1st col and report min col as 2nd col
+    auto min_col = Matrix_column_of_min_value_in_row(mat, 0, 1, width-1);
+    
+    ASSERT_EQUAL(min_col, 1);
+
+    delete mat;
+}
+
+// Get column of min value when decreasing order of last row 
+TEST(min_val_start_return_last_col) {
+    Matrix *mat = new Matrix; 
+    const int width = 8;
+    const int height = 5;
+  
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, 5);
+
+    // fill last row with decreasing ints
+    for (auto c = 0; c < width; ++c) {
+        *Matrix_at(mat, height-1, c) = width - c;
+    }
+
+    // get min_col as last col 
+    auto min_col = Matrix_column_of_min_value_in_row(mat, height-1, 0, width);
+    
+    ASSERT_EQUAL(min_col, 7);
+
+    delete mat;
+}
+
+// Get min value when in column start
+TEST(min_val_start_return_min_val_in_start_col) {
+    Matrix *mat = new Matrix; 
+    const int width = 8;
+    const int height = 5;
+  
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, 5);
+
+    // fill 1st row with increasing ints
+    for (auto c = 0; c < width; ++c) {
+        *Matrix_at(mat, 0, c) = c;
+    }
+
+    // skip 1st col and report min col as 2nd col
+    auto min = Matrix_min_value_in_row(mat, 0, 1, width-1);
+    
+    ASSERT_EQUAL(min, 1);
+
+    delete mat;
+}
+
+// Get min value when decreasing order of last row 
+TEST(min_val_start_return_last_col_val) {
+    Matrix *mat = new Matrix; 
+    const int width = 8;
+    const int height = 5;
+  
+    Matrix_init(mat, width, height);
+    Matrix_fill(mat, 5);
+
+    // fill last row with decreasing ints
+    for (auto c = 0; c < width; ++c) {
+        *Matrix_at(mat, height-1, c) = width - c;
+    }
+
+    // get min_col as last col 
+    auto min = Matrix_min_value_in_row(mat, height-1, 0, width);
+    
+    ASSERT_EQUAL(min, 1);
+
+    delete mat;
+}
+
 TEST_MAIN() // Do NOT put a semicolon here

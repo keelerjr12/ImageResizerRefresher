@@ -153,7 +153,7 @@ int Matrix_max(const Matrix* mat) {
         for (auto c = 0; c < Matrix_width(mat); ++c) {
             auto curr_val = *Matrix_at(mat, r, c);
             
-            if (max <= curr_val) {
+            if (max < curr_val) {
                 max = curr_val;
             }
         }
@@ -174,7 +174,24 @@ int Matrix_max(const Matrix* mat) {
 //           the leftmost one.
 int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
                                       int column_start, int column_end) {
-  assert(false); // TODO Replace with your implementation!
+    assert(mat);
+    assert(0 <= row && row < Matrix_height(mat));
+    assert(0 <= column_start && column_end <= Matrix_width(mat));
+    assert(column_start < column_end);
+    
+    auto min = *Matrix_at(mat, row, column_start);
+    auto min_c = column_start;
+
+    for (auto c = column_start + 1; c < column_end; ++c) {
+       auto val = *Matrix_at(mat, row, c);
+       
+       if (val < min) {
+           min = val;
+           min_c = c;
+       }
+    }
+
+    return min_c;
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -186,5 +203,20 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
 //           column_start (inclusive) and column_end (exclusive).
 int Matrix_min_value_in_row(const Matrix* mat, int row,
                             int column_start, int column_end) {
-  assert(false); // TODO Replace with your implementation!
+    assert(mat);
+    assert(0 <= row && row < Matrix_height(mat));
+    assert(0 <= column_start && column_end <= Matrix_width(mat));
+    assert(column_start < column_end);
+    
+    auto min = *Matrix_at(mat, row, column_start);
+
+    for (auto c = column_start + 1; c < column_end; ++c) {
+       auto val = *Matrix_at(mat, row, c);
+       
+       if (val < min) {
+           min = val;
+       }
+    }
+
+    return min;
 }
