@@ -59,7 +59,7 @@ TEST(init_matrix_query_width) {
 
   Matrix_init(mat, width, height);
 
-  ASSERT_EQUAL(Matrix_width(mat), width);
+  ASSERT_EQUAL(mat->get_width(), width);
   delete mat;
 }
 

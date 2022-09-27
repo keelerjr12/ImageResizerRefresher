@@ -17,10 +17,15 @@ const int MAX_MATRIX_HEIGHT = 500;
 
 // Representation of a 2D matrix of integers
 // Matrix objects may be copied.
-struct Matrix{
-  int width;
-  int height;
-  int data[MAX_MATRIX_WIDTH * MAX_MATRIX_HEIGHT];
+class Matrix{
+public:
+    // REQUIRES: mat points to a valid Matrix
+    // EFFECTS:  Returns the width of the Matrix.
+    int get_width() const { return width; }
+
+    int width;
+    int height;
+    int data[MAX_MATRIX_WIDTH * MAX_MATRIX_HEIGHT];
 };
 
 // REQUIRES: mat points to a Matrix
@@ -41,9 +46,6 @@ void Matrix_init(Matrix* mat, int width, int height);
 //           the end of each line.
 void Matrix_print(const Matrix* mat, std::ostream& os);
 
-// REQUIRES: mat points to a valid Matrix
-// EFFECTS:  Returns the width of the Matrix.
-int Matrix_width(const Matrix* mat);
 
 // REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the height of the Matrix.

@@ -30,10 +30,10 @@ void Matrix_init(Matrix* mat, int width, int height) {
 void Matrix_print(const Matrix* mat, std::ostream& os) {
     assert(mat);
 
-    os << Matrix_width(mat) << " " <<  Matrix_height(mat) << std::endl;
+    os << mat->get_width() << " " <<  Matrix_height(mat) << std::endl;
 
     for (auto r = 0; r < Matrix_height(mat); ++r) {
-        for (auto c = 0; c < Matrix_width(mat); ++c) {
+        for (auto c = 0; c < mat->get_width(); ++c) {
             os << *Matrix_at(mat, r, c) << " ";
         }
 
@@ -63,9 +63,9 @@ int Matrix_height(const Matrix* mat) {
 int Matrix_row(const Matrix* mat, const int* ptr) {
     assert(mat);
     assert(ptr >= mat->data &&
-          (mat->data + (Matrix_width(mat) * Matrix_height(mat)) - 1));
+          (mat->data + (mat->get_width() * Matrix_height(mat)) - 1));
 
-    return (ptr - mat->data) / Matrix_width(mat);
+    return (ptr - mat->data) / mat->get_width();
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -74,14 +74,14 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
 int Matrix_column(const Matrix* mat, const int* ptr) {
     assert(mat);
     assert(ptr >= mat->data &&
-          (mat->data + (Matrix_width(mat) * Matrix_height(mat)) - 1));
+          (mat->data + (mat->get_width() * Matrix_height(mat)) - 1));
 
-    return (ptr - mat->data) % Matrix_width(mat);
+    return (ptr - mat->data) % mat->get_width();
 }
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < Matrix_height(mat)
-//           0 <= column && column < Matrix_width(mat)
+//           0 <= column && column < mat->get_width()
 // MODIFIES: (The returned pointer may be used to modify an
 //            element in the Matrix.)
 // EFFECTS:  Returns a pointer to the element in the Matrix
@@ -89,23 +89,23 @@ int Matrix_column(const Matrix* mat, const int* ptr) {
 int* Matrix_at(Matrix* mat, int row, int column) {
     assert(mat);
     assert(0 <= row && row <= Matrix_height(mat));
-    assert(0 <= column && column <= Matrix_width(mat));
+    assert(0 <= column && column <= mat->get_width());
 
-    return &mat->data[row * Matrix_width(mat) + column];
+    return &mat->data[row * mat->get_width() + column];
 }
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < Matrix_height(mat)
-//           0 <= column && column < Matrix_width(mat)
+//           0 <= column && column < mat->get_width()
 //
 // EFFECTS:  Returns a pointer-to-const to the element in
 //           the Matrix at the given row and column.
 const int* Matrix_at(const Matrix* mat, int row, int column) {
     assert(mat);
     assert(0 <= row && row <= Matrix_height(mat));
-    assert(0 <= column && column <= Matrix_width(mat));
+    assert(0 <= column && column <= mat->get_width());
 
-    return &mat->data[row * Matrix_width(mat) + column];
+    return &mat->data[row * mat->get_width() + column];
 }
 
 // REQUIRES: mat points to a valid Matrix
@@ -115,7 +115,7 @@ void Matrix_fill(Matrix* mat, int value) {
     assert(mat);
 
     for (auto r = 0; r < Matrix_height(mat); ++r) {
-        for (auto c = 0; c < Matrix_width(mat); ++c) {
+        for (auto c = 0; c < mat->get_width(); ++c) {
             *Matrix_at(mat, r, c) = value;
         }
     }
@@ -130,7 +130,7 @@ void Matrix_fill_border(Matrix* mat, int value) {
     assert(mat);
 
     // Fill top * bottoms rows
-    for (auto c = 0; c < Matrix_width(mat); ++c) {
+    for (auto c = 0; c < mat->get_width(); ++c) {
         *Matrix_at(mat, 0, c) = value;
         *Matrix_at(mat, Matrix_height(mat) - 1, c) = value;
     }
@@ -138,7 +138,7 @@ void Matrix_fill_border(Matrix* mat, int value) {
     // Fill left & right columns
     for (auto r = 0; r < Matrix_height(mat); ++r) {
         *Matrix_at(mat, r, 0) = value;
-        *Matrix_at(mat, r, Matrix_width(mat) - 1) = value;
+        *Matrix_at(mat, r, mat->get_width() - 1) = value;
     }
 }
 
@@ -150,7 +150,7 @@ int Matrix_max(const Matrix* mat) {
     auto max = std::numeric_limits<int>::min();
 
     for (auto r = 0; r < Matrix_height(mat); ++r) {
-        for (auto c = 0; c < Matrix_width(mat); ++c) {
+        for (auto c = 0; c < mat->get_width(); ++c) {
             auto curr_val = *Matrix_at(mat, r, c);
             
             if (max < curr_val) {
@@ -164,7 +164,7 @@ int Matrix_max(const Matrix* mat) {
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < Matrix_height(mat)
-//           0 <= column_start && column_end <= Matrix_width(mat)
+//           0 <= column_start && column_end <= mat->get_width()
 //           column_start < column_end
 // EFFECTS:  Returns the column of the element with the minimal value
 //           in a particular region. The region is defined as elements
@@ -176,7 +176,7 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
                                       int column_start, int column_end) {
     assert(mat);
     assert(0 <= row && row < Matrix_height(mat));
-    assert(0 <= column_start && column_end <= Matrix_width(mat));
+    assert(0 <= column_start && column_end <= mat->get_width());
     assert(column_start < column_end);
     
     auto min = *Matrix_at(mat, row, column_start);
@@ -196,7 +196,7 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < Matrix_height(mat)
-//           0 <= column_start && column_end <= Matrix_width(mat)
+//           0 <= column_start && column_end <= mat->get_width()
 //           column_start < column_end
 // EFFECTS:  Returns the minimal value in a particular region. The region
 //           is defined as elements in the given row and between
@@ -205,7 +205,7 @@ int Matrix_min_value_in_row(const Matrix* mat, int row,
                             int column_start, int column_end) {
     assert(mat);
     assert(0 <= row && row < Matrix_height(mat));
-    assert(0 <= column_start && column_end <= Matrix_width(mat));
+    assert(0 <= column_start && column_end <= mat->get_width());
     assert(column_start < column_end);
     
     auto min = *Matrix_at(mat, row, column_start);

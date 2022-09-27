@@ -20,7 +20,7 @@ TEST(test_matrix_basic) {
   Matrix *mat = new Matrix;
   Matrix_init(mat, 5, 5);
 
-  ASSERT_EQUAL(Matrix_width(mat), 5);
+  ASSERT_EQUAL(mat->get_width(), 5);
   ASSERT_EQUAL(Matrix_height(mat), 5);
 
   Matrix_fill(mat, 0);
