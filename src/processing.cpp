@@ -18,19 +18,17 @@ void rotate_left(Image* img) {
   int height = Image_height(img);
 
   // auxiliary image to temporarily store rotated image
-  Image *aux = new Image;
-  Image_init(aux, height, width); // width and height switched
+  auto aux = Image(width, height);
 
   // iterate through pixels and place each where it goes in temp
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      Image_set_pixel(aux, width - 1 - c, r, Image_get_pixel(img, r, c));
+      Image_set_pixel(&aux, width - 1 - c, r, Image_get_pixel(img, r, c));
     }
   }
 
   // Copy data back into original
-  *img = *aux;
-  delete aux;
+  *img = aux;
 }
 // ^ DO NOT CHANGE ^ ------------------------------------------------
 
@@ -46,19 +44,17 @@ void rotate_right(Image* img){
   int height = Image_height(img);
 
   // auxiliary image to temporarily store rotated image
-  Image *aux = new Image;
-  Image_init(aux, height, width); // width and height switched
+  auto aux = Image(width, height);
 
   // iterate through pixels and place each where it goes in temp
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      Image_set_pixel(aux, c, height - 1 - r, Image_get_pixel(img, r, c));
+      Image_set_pixel(&aux, c, height - 1 - r, Image_get_pixel(img, r, c));
     }
   }
 
   // Copy data back into original
-  *img = *aux;
-  delete aux;
+  *img = aux;
 }
 // ^ DO NOT CHANGE ^ ------------------------------------------------
 
@@ -89,22 +85,22 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           size as the given Image, and then the energy matrix for that
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
-void compute_energy_matrix(const Image* img, Matrix* energy) {
+Matrix compute_energy_matrix(const Image* img) {
     assert(img);
-    assert(energy);
 
-    Matrix_init(energy, img->width, img->height); 
+    auto energy = Matrix(img->width, img->height);
+
     auto max = std::numeric_limits<int>::min();
     
-    for (auto r = 1; r < Matrix_height(energy) - 1; ++r) {
-        for (auto c = 1; c < Matrix_width(energy) - 1; ++c) {
+    for (auto r = 1; r < energy.get_height() - 1; ++r) {
+        for (auto c = 1; c < energy.get_width() - 1; ++c) {
             auto pixel_n = Image_get_pixel(img, r-1, c); 
             auto pixel_s = Image_get_pixel(img, r+1, c); 
             auto pixel_w = Image_get_pixel(img, r, c-1); 
             auto pixel_e = Image_get_pixel(img, r, c+1); 
 
             auto e = squared_difference(pixel_n, pixel_s) + squared_difference(pixel_w, pixel_e);
-            *Matrix_at(energy, r, c) = e;
+            *Matrix_at(&energy, r, c) = e;
 
             if (e > max) {
                 max = e;
@@ -112,46 +108,42 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
         }
     }
 
-    Matrix_fill_border(energy, max);
+    Matrix_fill_border(&energy, max);
 }
 
 
 // REQUIRES: energy points to a valid Matrix.
-//           cost points to a Matrix.
-//           energy and cost aren't pointing to the same Matrix
-// MODIFIES: *cost
+// MODIFIES: 
 // EFFECTS:  cost serves as an "output parameter".
 //           The Matrix pointed to by cost is initialized to be the same
 //           size as the given energy Matrix, and then the cost matrix is
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
-void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
+Matrix compute_vertical_cost_matrix(const Matrix* energy) {
     assert(energy);
-    assert(cost);
-    assert(energy != cost);
 
-    Matrix_init(cost, Matrix_width(energy), Matrix_height(energy));
+    auto cost = Matrix(energy->get_width(), energy->get_height());
 
     // compute 1st row
-    for (auto c = 0; c < Matrix_width(energy); ++c) {
-        *Matrix_at(cost, 0, c) = *Matrix_at(energy, 0, c);
+    for (auto c = 0; c < energy->get_width(); ++c) {
+        *Matrix_at(&cost, 0, c) = *Matrix_at(energy, 0, c);
     }
 
     // compute subsequent rows
-    for (auto r = 1; r < Matrix_height(energy); ++r) {
+    for (auto r = 1; r < energy->get_height(); ++r) {
         // compute 0th col
-        auto min_cost = Matrix_min_value_in_row(cost, r-1, 0, 2);
-        *Matrix_at(cost, r, 0) = *Matrix_at(energy, r, 0) + min_cost;
+        auto min_cost = Matrix_min_value_in_row(&cost, r-1, 0, 2);
+        *Matrix_at(&cost, r, 0) = *Matrix_at(energy, r, 0) + min_cost;
 
         // compute middle cols
-        for (auto c = 1; c < Matrix_width(energy)-1; ++c) {
-            min_cost = Matrix_min_value_in_row(cost, r-1, c-1, c+2);
-            *Matrix_at(cost, r, c) = *Matrix_at(energy, r, c) + min_cost;
+        for (auto c = 1; c < energy->get_width()-1; ++c) {
+            min_cost = Matrix_min_value_in_row(&cost, r-1, c-1, c+2);
+            *Matrix_at(&cost, r, c) = *Matrix_at(energy, r, c) + min_cost;
         }
         
         // compute last col
-        min_cost = Matrix_min_value_in_row(cost, r-1, Matrix_width(energy)-2, Matrix_width(energy));
-        *Matrix_at(cost, r, Matrix_width(energy)-1) = *Matrix_at(energy, r, Matrix_width(energy)-1) + min_cost;
+        min_cost = Matrix_min_value_in_row(&cost, r-1, energy->get_width()-2, energy->get_width());
+        *Matrix_at(&cost, r, energy->get_width()-1) = *Matrix_at(energy, r, energy->get_width()-1) + min_cost;
     }
 }
 

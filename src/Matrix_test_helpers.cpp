@@ -9,9 +9,9 @@
 
 bool Matrix_equal(const Matrix* mat1, const Matrix* mat2){
   if (mat1->get_width() != mat2->get_width()){ return false; }
-  if (Matrix_height(mat1) != Matrix_height(mat2)){ return false; }
+  if (mat1->get_height() != mat2->get_height()){ return false; }
 
-  for(int r = 0; r < Matrix_height(mat1); ++r){
+  for(int r = 0; r < mat1->get_height(); ++r){
     for(int c = 0; c < mat1->get_width(); ++c){
       if (*Matrix_at(mat1, r, c) != *Matrix_at(mat2, r, c)){ return false; }
     }

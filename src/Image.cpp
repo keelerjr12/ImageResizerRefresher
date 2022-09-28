@@ -4,36 +4,28 @@
 #include "Image.h"
 #include "Matrix.h"
 
-// REQUIRES: img points to an Image
-//           0 < width && width <= MAX_MATRIX_WIDTH
+// REQUIRES: 0 < width && width <= MAX_MATRIX_WIDTH
 //           0 < height && height <= MAX_MATRIX_HEIGHT
-// MODIFIES: *img
+// MODIFIES: img
 // EFFECTS:  Initializes the Image with the given width and height.
-// NOTE:     Do NOT use new or delete here.
-void Image_init(Image* img, int width, int height) {
-    assert(img);
-    assert(0 < width && width <= MAX_MATRIX_WIDTH);
-    assert(0 < height && height <= MAX_MATRIX_HEIGHT);
+Image::Image(int width, int height) 
+  : width(width), height(height),
+    red_channel(width, height),
+    green_channel(width, height),
+    blue_channel(width, height){
 
-    img->width = width;
-    img->height = height;
-
-    Matrix_init(&img->red_channel, width, height);
-    Matrix_init(&img->green_channel, width, height);
-    Matrix_init(&img->blue_channel, width, height);
+  assert(0 < width && width <= MAX_MATRIX_WIDTH);
+  assert(0 < height && height <= MAX_MATRIX_HEIGHT);
 }
 
-// REQUIRES: img points to an Image
-//           is contains an image in PPM format without comments
+// REQUIRES: is contains an image in PPM format without comments
 //           (any kind of whitespace is ok)
-// MODIFIES: *img
+// MODIFIES: 
 // EFFECTS:  Initializes the Image by reading in an image in PPM format
 //           from the given input stream.
 // NOTE:     See the project spec for a discussion of PPM format.
 // NOTE:     Do NOT use new or delete here.
-void Image_init(Image* img, std::istream& is) {
-    assert(img);
-
+Image image_from_stream(std::istream& is) {
     std::string format;
     is >> format;
 
@@ -46,18 +38,20 @@ void Image_init(Image* img, std::istream& is) {
     int max_rgb;
     is >> max_rgb;
 
-    Image_init(img, width, height);
-
+    auto img = Image(width, height);
+    
     auto pixel = 0;
     int r, g, b;
 
     while (is >> r >> g >> b) {
-        *Matrix_at(&img->red_channel, pixel / width, pixel % width) = r;
-        *Matrix_at(&img->green_channel, pixel / width, pixel % width) = g;
-        *Matrix_at(&img->blue_channel, pixel / width, pixel % width) = b;
+        *Matrix_at(&img.red_channel, pixel / width, pixel % width) = r;
+        *Matrix_at(&img.green_channel, pixel / width, pixel % width) = g;
+        *Matrix_at(&img.blue_channel, pixel / width, pixel % width) = b;
 
         ++pixel;
     }
+
+    return img;
 }
 
 // REQUIRES: img points to a valid Image

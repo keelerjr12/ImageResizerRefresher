@@ -23,7 +23,10 @@ const int MAX_INTENSITY = 255;
 
 // Representation of 2D RGB image.
 // Image objects may be copied.
-struct Image {
+class Image {
+ public:
+  Image(int width, int height);
+
   int width;
   int height;
   Matrix red_channel;
@@ -31,23 +34,15 @@ struct Image {
   Matrix blue_channel;
 };
 
-// REQUIRES: img points to an Image
-//           0 < width && width <= MAX_MATRIX_WIDTH
-//           0 < height && height <= MAX_MATRIX_HEIGHT
-// MODIFIES: *img
-// EFFECTS:  Initializes the Image with the given width and height.
-// NOTE:     Do NOT use new or delete here.
-void Image_init(Image* img, int width, int height);
 
 // REQUIRES: img points to an Image
 //           is contains an image in PPM format without comments
 //           (any kind of whitespace is ok)
-// MODIFIES: *img
+// MODIFIES: 
 // EFFECTS:  Initializes the Image by reading in an image in PPM format
 //           from the given input stream.
 // NOTE:     See the project spec for a discussion of PPM format.
-// NOTE:     Do NOT use new or delete here.
-void Image_init(Image* img, std::istream& is);
+Image image_from_stream(std::istream& is);
 
 // REQUIRES: img points to a valid Image
 // MODIFIES: os
