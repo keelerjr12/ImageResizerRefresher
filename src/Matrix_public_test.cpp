@@ -22,32 +22,32 @@ TEST(test_matrix_basic) {
   ASSERT_EQUAL(mat.get_width(), 5);
   ASSERT_EQUAL(mat.get_height(), 5);
 
-  Matrix_fill(&mat, 0);
+  Matrix_fill(mat, 0);
 
-  int *ptr = Matrix_at(&mat, 2, 3);
-  ASSERT_EQUAL(Matrix_row(&mat, ptr), 2);
-  ASSERT_EQUAL(Matrix_column(&mat, ptr), 3);
+  int *ptr = &mat.at(2, 3);
+  ASSERT_EQUAL(Matrix_row(mat, ptr), 2);
+  ASSERT_EQUAL(Matrix_column(mat, ptr), 3);
   ASSERT_EQUAL(*ptr, 0);
   *ptr = 42;
 
-  const int *cptr = Matrix_at(&mat, 2, 3);
+  const int *cptr = &mat.at(2, 3);
   ASSERT_EQUAL(*cptr, 42);
 
-  Matrix_fill_border(&mat, 2);
-  ASSERT_EQUAL(*Matrix_at(&mat, 0, 0), 2);
+  Matrix_fill_border(mat, 2);
+  ASSERT_EQUAL(mat.at(0, 0), 2);
 
-  ASSERT_EQUAL(Matrix_max(&mat), 42);
+  ASSERT_EQUAL(Matrix_max(mat), 42);
 }
 
 TEST(test_matrix_print) {
   auto mat = Matrix(1, 1);
 
-  *Matrix_at(&mat, 0, 0) = 42;
+  mat.at(0, 0) = 42;
   ostringstream expected;
   expected << "1 1\n"
            << "42 \n";
   ostringstream actual;
-  Matrix_print(&mat, actual);
+  Matrix_print(mat, actual);
   ASSERT_EQUAL(expected.str(), actual.str());
 }
 

@@ -8,7 +8,6 @@
  */
 
 #include <iostream>
-#include <memory>
 #include "Matrix.h"
 
 // Representation of an RGB Pixel used for
@@ -31,11 +30,23 @@ class Image {
   Image(const Image& rhs);
   Image& operator=(const Image& rhs);
 
+  // REQUIRES: img points to a valid Image
+  // EFFECTS:  Returns the width of the Image.
+  int get_width() const { return width; }
+
+  // REQUIRES: img points to a valid Image
+  // EFFECTS:  Returns the height of the Image.
+  int get_height() const { return height; }
+
+ private:
+
   int width;
   int height;
-  std::unique_ptr<Matrix> red_channel;
-  std::unique_ptr<Matrix> green_channel;
-  std::unique_ptr<Matrix> blue_channel;
+
+ public: // TODO: fix this
+  Matrix red_channel;
+  Matrix green_channel;
+  Matrix blue_channel;
 };
 
 
@@ -64,12 +75,6 @@ Image image_from_stream(std::istream& is);
 //           for an example.
 void Image_print(const Image* img, std::ostream& os);
 
-// REQUIRES: img points to a valid Image
-// EFFECTS:  Returns the width of the Image.
-int Image_width(const Image* img);
-
-// REQUIRES: img points to a valid Image
-// EFFECTS:  Returns the height of the Image.
 int Image_height(const Image* img);
 
 // REQUIRES: img points to a valid Image

@@ -122,7 +122,7 @@ void test_energy(const Matrix *energy_mat, string prefix){
 
   auto energy_mat_correct = load_matrix(DATA_FOLDER + "/" + prefix + "_energy_correct.txt");
 
-  assert(Matrix_equal(energy_mat, &energy_mat_correct));
+  assert(Matrix_equal(*energy_mat, energy_mat_correct));
   cout << "PASS" << endl;
 }
 
@@ -134,7 +134,7 @@ void test_cost(const Matrix *cost_mat, string prefix){
 
   auto cost_mat_correct = load_matrix(DATA_FOLDER + "/" + prefix + "_cost_correct.txt");
 
-  assert(Matrix_equal(cost_mat, &cost_mat_correct));
+  assert(Matrix_equal(*cost_mat, cost_mat_correct));
   cout << "PASS" << endl;
 }
 
@@ -200,7 +200,7 @@ static Matrix load_matrix(string filename){
 
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      fin >> *Matrix_at(&mat, r, c);
+      fin >> mat.at(r, c);
     }
   }
 
@@ -209,7 +209,7 @@ static Matrix load_matrix(string filename){
 
 static void write_matrix(const Matrix* mat, string filename){
   ofstream fout(filename.c_str());
-  Matrix_print(mat, fout);
+  Matrix_print(*mat, fout);
 }
 
 static Image load_image(string filename){

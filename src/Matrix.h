@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <vector>
 
 const int MAX_MATRIX_WIDTH = 500;
 const int MAX_MATRIX_HEIGHT = 500;
@@ -24,6 +25,8 @@ class Matrix{
   // MODIFIES: *mat
   // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
   Matrix(int width, int height);
+
+  Matrix(const Matrix& rhs);
   
   // REQUIRES: mat points to a valid Matrix
   // EFFECTS:  Returns the width of the Matrix.
@@ -33,12 +36,25 @@ class Matrix{
   // EFFECTS:  Returns the height of the Matrix.
   int get_height() const { return height; }
 
+
+  // REQUIRES: mat points to a valid Matrix
+  //           0 <= row && row < mat->get_height()
+  //           0 <= column && column < mat->get_width()
+  //
+  // MODIFIES: (The returned pointer may be used to modify an
+  //            element in the Matrix.)
+  // EFFECTS:  Returns a pointer to the element in the Matrix
+  //           at the given row and column.
+  int& at(int row, int column);
+
+  const int& at(int row, int column) const;
+  
  private:
   int width;
   int height;
-  
+
  public:
-  int data[MAX_MATRIX_WIDTH * MAX_MATRIX_HEIGHT];
+  std::vector<int> data;
 };
 
 
@@ -63,26 +79,6 @@ int Matrix_row(const Matrix& mat, const int* ptr);
 //           ptr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix& mat, const int* ptr);
-
-
-// REQUIRES: mat points to a valid Matrix
-//           0 <= row && row < mat->get_height()
-//           0 <= column && column < mat->get_width()
-//
-// MODIFIES: (The returned pointer may be used to modify an
-//            element in the Matrix.)
-// EFFECTS:  Returns a pointer to the element in the Matrix
-//           at the given row and column.
-int* Matrix_at(Matrix& mat, int row, int column);
-
-
-// REQUIRES: mat points to a valid Matrix
-//           0 <= row && row < mat->get_height()
-//           0 <= column && column < mat->get_width()
-//
-// EFFECTS:  Returns a pointer-to-const to the element in
-//           the Matrix at the given row and column.
-const int* Matrix_at(const Matrix& mat, int row, int column);
 
 
 // REQUIRES: mat points to a valid Matrix

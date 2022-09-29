@@ -1,21 +1,48 @@
 // Project UID af1f95f547e44c8ea88730dfb185559d
-#include <cassert>
-#include <limits>
 #include "Matrix.h"
+#include <cassert>
+#include <iterator>
+#include <limits>
+#include <memory>
 
 // REQUIRES: mat points to a Matrix
 //           0 < width && width <= MAX_MATRIX_WIDTH
 //           0 < height && height <= MAX_MATRIX_HEIGHT
 // MODIFIES: *mat
 // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
-Matrix::Matrix(int width, int height) {
-    assert(0 < width && width <= MAX_MATRIX_WIDTH);
-    assert(0 < height && height <= MAX_MATRIX_HEIGHT);
+Matrix::Matrix(int width, int height) 
+  : data(MAX_MATRIX_WIDTH * MAX_MATRIX_HEIGHT) {
 
-    this->width = width;
-    this->height = height;
+  assert(0 < width && width <= MAX_MATRIX_WIDTH);
+  assert(0 < height && height <= MAX_MATRIX_HEIGHT);
 
-    Matrix_fill(*this, 0);
+  this->width = width;
+  this->height = height;
+
+  Matrix_fill(*this, 0);
+}
+
+Matrix::Matrix(const Matrix& rhs) : data(rhs.data) {
+}
+
+// REQUIRES: 0 <= row && row < mat->get_height()
+//           0 <= column && column < mat->get_width()
+// MODIFIES: (The returned pointer may be used to modify an
+//            element in the Matrix.)
+// EFFECTS:  Returns a pointer to the element in the Matrix
+//           at the given row and column.
+int& Matrix::at(int row, int column) {
+    assert(0 <= row && row <= get_height());
+    assert(0 <= column && column <= get_width());
+
+    return data[row * get_width() + column];
+}
+
+const int& Matrix::at(int row, int column) const {
+    assert(0 <= row && row <= get_height());
+    assert(0 <= column && column <= get_width());
+
+    return data[row * get_width() + column];
 }
 
 // REQUIRES: 
@@ -27,47 +54,29 @@ Matrix::Matrix(int width, int height) {
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
 void Matrix_print(const Matrix& mat, std::ostream& os) {
-    os << mat.get_width() << " " <<  mat.get_height() << std::endl;
+  os << mat.get_width() << " " <<  mat.get_height() << std::endl;
 
-    for (auto r = 0; r < mat.get_height(); ++r) {
-        for (auto c = 0; c < mat.get_width(); ++c) {
-            os << *Matrix_at(mat, r, c) << " ";
-        }
-
-        os << std::endl;
+  for (auto r = 0; r < mat.get_height(); ++r) {
+    for (auto c = 0; c < mat.get_width(); ++c) {
+      os << mat.at(r, c) << " ";
     }
+
+    os << std::endl;
+  }
 }
 
 // REQUIRES: ptr points to an element in the Matrix
 // EFFECTS:  Returns the row of the element pointed to by ptr.
 int Matrix_row(const Matrix& mat, const int* ptr) {
-    assert(ptr >= mat.data &&
-          (mat.data + (mat.get_width() * mat.get_height()) - 1));
-
-    return (ptr - mat.data) / mat.get_width();
+    return (ptr - &mat.data[0]) / mat.get_width();
 }
 
 // REQUIRES: ptr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix& mat, const int* ptr) {
-    assert(ptr >= mat.data &&
-          (mat.data + (mat.get_width() * mat.get_height()) - 1));
-
-    return (ptr - mat.data) % mat.get_width();
+    return (ptr - &mat.data[0]) % mat.get_width();
 }
 
-// REQUIRES: 0 <= row && row < mat->get_height()
-//           0 <= column && column < mat->get_width()
-// MODIFIES: (The returned pointer may be used to modify an
-//            element in the Matrix.)
-// EFFECTS:  Returns a pointer to the element in the Matrix
-//           at the given row and column.
-int* Matrix_at(Matrix& mat, int row, int column) {
-    assert(0 <= row && row <= mat.get_height());
-    assert(0 <= column && column <= mat.get_width());
-
-    return &mat.data[row * mat.get_width() + column];
-}
 
 // REQUIRES: 0 <= row && row < mat->get_height()
 //           0 <= column && column < mat->get_width()
@@ -86,7 +95,7 @@ const int* Matrix_at(const Matrix& mat, int row, int column) {
 void Matrix_fill(Matrix& mat, int value) {
     for (auto r = 0; r < mat.get_height(); ++r) {
         for (auto c = 0; c < mat.get_width(); ++c) {
-            *Matrix_at(mat, r, c) = value;
+            mat.at(r, c) = value;
         }
     }
 }
@@ -98,14 +107,14 @@ void Matrix_fill(Matrix& mat, int value) {
 void Matrix_fill_border(Matrix& mat, int value) {
     // Fill top * bottoms rows
     for (auto c = 0; c < mat.get_width(); ++c) {
-        *Matrix_at(mat, 0, c) = value;
-        *Matrix_at(mat, mat.get_height() - 1, c) = value;
+        mat.at(0, c) = value;
+        mat.at(mat.get_height() - 1, c) = value;
     }
     
     // Fill left & right columns
     for (auto r = 0; r < mat.get_height(); ++r) {
-        *Matrix_at(mat, r, 0) = value;
-        *Matrix_at(mat, r, mat.get_width() - 1) = value;
+        mat.at(r, 0) = value;
+        mat.at(r, mat.get_width() - 1) = value;
     }
 }
 

@@ -100,7 +100,7 @@ Matrix compute_energy_matrix(const Image* img) {
             auto pixel_e = Image_get_pixel(img, r, c+1); 
 
             auto e = squared_difference(pixel_n, pixel_s) + squared_difference(pixel_w, pixel_e);
-            *Matrix_at(energy, r, c) = e;
+            energy.at(r, c) = e;
 
             if (e > max) {
                 max = e;
@@ -128,24 +128,24 @@ Matrix compute_vertical_cost_matrix(const Matrix* energy) {
 
     // compute 1st row
     for (auto c = 0; c < energy->get_width(); ++c) {
-        *Matrix_at(cost, 0, c) = *Matrix_at(*energy, 0, c);
+        cost.at(0, c) = energy->at(0, c);
     }
 
     // compute subsequent rows
     for (auto r = 1; r < energy->get_height(); ++r) {
         // compute 0th col
         auto min_cost = Matrix_min_value_in_row(cost, r-1, 0, 2);
-        *Matrix_at(cost, r, 0) = *Matrix_at(*energy, r, 0) + min_cost;
+        cost.at(r, 0) = energy->at(r, 0) + min_cost;
 
         // compute middle cols
         for (auto c = 1; c < energy->get_width()-1; ++c) {
             min_cost = Matrix_min_value_in_row(cost, r-1, c-1, c+2);
-            *Matrix_at(cost, r, c) = *Matrix_at(*energy, r, c) + min_cost;
+            cost.at(r, c) = energy->at(r, c) + min_cost;
         }
         
         // compute last col
         min_cost = Matrix_min_value_in_row(cost, r-1, energy->get_width()-2, energy->get_width());
-        *Matrix_at(cost, r, energy->get_width()-1) = *Matrix_at(*energy, r, energy->get_width()-1) + min_cost;
+        cost.at(r, energy->get_width()-1) = energy->at(r, energy->get_width()-1) + min_cost;
     }
 
     return cost;
