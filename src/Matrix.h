@@ -50,19 +50,19 @@ class Matrix{
 //           Each element is followed by a space and each row is followed
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
-void Matrix_print(const Matrix* mat, std::ostream& os);
+void Matrix_print(const Matrix& mat, std::ostream& os);
 
 
 // REQUIRES: mat points to a valid Matrix
 //           ptr points to an element in the Matrix
 // EFFECTS:  Returns the row of the element pointed to by ptr.
-int Matrix_row(const Matrix* mat, const int* ptr);
+int Matrix_row(const Matrix& mat, const int* ptr);
 
 
 // REQUIRES: mat points to a valid Matrix
 //           ptr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
-int Matrix_column(const Matrix* mat, const int* ptr);
+int Matrix_column(const Matrix& mat, const int* ptr);
 
 
 // REQUIRES: mat points to a valid Matrix
@@ -73,7 +73,7 @@ int Matrix_column(const Matrix* mat, const int* ptr);
 //            element in the Matrix.)
 // EFFECTS:  Returns a pointer to the element in the Matrix
 //           at the given row and column.
-int* Matrix_at(Matrix* mat, int row, int column);
+int* Matrix_at(Matrix& mat, int row, int column);
 
 
 // REQUIRES: mat points to a valid Matrix
@@ -82,13 +82,13 @@ int* Matrix_at(Matrix* mat, int row, int column);
 //
 // EFFECTS:  Returns a pointer-to-const to the element in
 //           the Matrix at the given row and column.
-const int* Matrix_at(const Matrix* mat, int row, int column);
+const int* Matrix_at(const Matrix& mat, int row, int column);
 
 
 // REQUIRES: mat points to a valid Matrix
 // MODIFIES: *mat
 // EFFECTS:  Sets each element of the Matrix to the given value.
-void Matrix_fill(Matrix* mat, int value);
+void Matrix_fill(Matrix& mat, int value);
 
 
 // REQUIRES: mat points to a valid Matrix
@@ -96,12 +96,12 @@ void Matrix_fill(Matrix* mat, int value);
 // EFFECTS:  Sets each element on the border of the Matrix to
 //           the given value. These are all elements in the first/last
 //           row or the first/last column.
-void Matrix_fill_border(Matrix* mat, int value);
+void Matrix_fill_border(Matrix& mat, int value);
 
 
 // REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the value of the maximum element in the Matrix
-int Matrix_max(const Matrix* mat);
+int Matrix_max(const Matrix& mat);
 
 
 // REQUIRES: mat points to a valid Matrix
@@ -114,7 +114,7 @@ int Matrix_max(const Matrix* mat);
 //           column_end (exclusive).
 //           If multiple elements are minimal, returns the column of
 //           the leftmost one.
-int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
+int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
                                       int column_start, int column_end);
 
 // REQUIRES: mat points to a valid Matrix
@@ -124,7 +124,7 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
 // EFFECTS:  Returns the minimal value in a particular region. The region
 //           is defined as elements in the given row and between
 //           column_start (inclusive) and column_end (exclusive).
-int Matrix_min_value_in_row(const Matrix* mat, int row,
+int Matrix_min_value_in_row(const Matrix& mat, int row,
                             int column_start, int column_end);
 
 #endif // MATRIX_H

@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <memory>
 #include "Matrix.h"
 
 // Representation of an RGB Pixel used for
@@ -27,11 +28,14 @@ class Image {
  public:
   Image(int width, int height);
 
+  Image(const Image& rhs);
+  Image& operator=(const Image& rhs);
+
   int width;
   int height;
-  Matrix red_channel;
-  Matrix green_channel;
-  Matrix blue_channel;
+  std::unique_ptr<Matrix> red_channel;
+  std::unique_ptr<Matrix> green_channel;
+  std::unique_ptr<Matrix> blue_channel;
 };
 
 

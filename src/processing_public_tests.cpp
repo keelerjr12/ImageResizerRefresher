@@ -23,9 +23,9 @@ void test_remove_seam(const Image* img, const int seam[],
 void test_seam_carve(const Image *img, string prefix,
                             int new_width, int new_height);
 
-static void load_matrix(Matrix* mat, string filename);
+static Matrix load_matrix(string filename);
 static void write_matrix(const Matrix* mat, string filename);
-static void load_image(Image* img, string filename);
+static Image load_image(string filename);
 static void write_image(const Image* img, string filename);
 static void load_seam(int seam[], string filename);
 static void write_seam(const int seam[], int len, string filename);
@@ -61,68 +61,58 @@ int main(int argc, char *argv[]){
 }
 
 void test_all(string prefix, int sizes[], int num_sizes){
-  Image* img = new Image;
-  load_image(img, DATA_FOLDER + "/" + prefix + ".ppm");
+  auto img = load_image(DATA_FOLDER + "/" + prefix + ".ppm");
 
   // Test rotate
-  test_rotate(img, prefix);
+  test_rotate(&img, prefix);
 
   // Test energy
-  Matrix* energy = new Matrix;
-  compute_energy_matrix(img, energy);
-  test_energy(energy, prefix);
+  auto energy = compute_energy_matrix(&img);
+  test_energy(&energy, prefix);
 
   // Test cost
-  Matrix*  cost = new Matrix;
-  compute_vertical_cost_matrix(energy, cost);
-  test_cost(cost, prefix);
+  auto cost = compute_vertical_cost_matrix(&energy);
+  test_cost(&cost, prefix);
 
   // Test find seam
   int seam[MAX_MATRIX_HEIGHT];
-  find_minimal_vertical_seam(cost, seam);
-  test_find_seam(seam, Matrix_height(cost), prefix);
+  find_minimal_vertical_seam(&cost, seam);
+  test_find_seam(seam, cost.get_height(), prefix);
 
   // Test remove seam
-  test_remove_seam(img, seam, prefix);
+  test_remove_seam(&img, seam, prefix);
 
   // Test full seam carving algorithm on various sizes
   for(int i = 0; i < num_sizes; ++i){
-    test_seam_carve(img, prefix, sizes[2*i], sizes[2*i + 1]);
+    test_seam_carve(&img, prefix, sizes[2*i], sizes[2*i + 1]);
   }
 
   cout << prefix << " tests PASS" << endl << endl;
-
-  delete cost;
-  delete energy;
-  delete img;
 }
 
 void test_rotate(const Image *img, string prefix){
-  Image* rotated_img = new Image;
-  Image* rotated_img_correct = new Image;
+  std::cout << "here1" << std::endl;
+  auto rotated_img = Image(*img);
+  std::cout << "here2" << std::endl;
 
   // Test left rotation
   cout << "Testing " << prefix << " rotate left..." << flush;
-  *rotated_img = *img;
-  rotate_left(rotated_img);
-  write_image(rotated_img, DATA_FOLDER + "/" + prefix + "_left" + OUT_PPM_EXT);
+  rotate_left(&rotated_img);
+  write_image(&rotated_img, DATA_FOLDER + "/" + prefix + "_left" + OUT_PPM_EXT);
 
-  load_image(rotated_img_correct, DATA_FOLDER + "/" + prefix + "_left.correct.ppm");
-  assert(Image_equal(rotated_img, rotated_img_correct));
+  auto rotated_img_correct = load_image(DATA_FOLDER + "/" + prefix + "_left.correct.ppm");
+  assert(Image_equal(&rotated_img, &rotated_img_correct));
   cout << "PASS" << endl;
 
   // Test right rotation
   cout << "Testing " << prefix << " rotate right...";
-  *rotated_img = *img;
-  rotate_right(rotated_img);
-  write_image(rotated_img, DATA_FOLDER + "/" + prefix + "_right" + OUT_PPM_EXT);
+  rotated_img = *img;
+  rotate_right(&rotated_img);
+  write_image(&rotated_img, DATA_FOLDER + "/" + prefix + "_right" + OUT_PPM_EXT);
 
-  load_image(rotated_img_correct, DATA_FOLDER + "/" + prefix + "_right.correct.ppm");
-  assert(Image_equal(rotated_img, rotated_img_correct));
+  rotated_img_correct = load_image(DATA_FOLDER + "/" + prefix + "_right.correct.ppm");
+  assert(Image_equal(&rotated_img, &rotated_img_correct));
   cout << "PASS" << endl;
-
-  delete rotated_img_correct;
-  delete rotated_img;
 }
 
 void test_energy(const Matrix *energy_mat, string prefix){
@@ -130,13 +120,10 @@ void test_energy(const Matrix *energy_mat, string prefix){
 
   write_matrix(energy_mat, DATA_FOLDER + "/" +  prefix + "_energy" + OUT_TXT_EXT);
 
-  Matrix* energy_mat_correct = new Matrix;
-  load_matrix(energy_mat_correct, DATA_FOLDER + "/" + prefix + "_energy_correct.txt");
+  auto energy_mat_correct = load_matrix(DATA_FOLDER + "/" + prefix + "_energy_correct.txt");
 
-  assert(Matrix_equal(energy_mat, energy_mat_correct));
+  assert(Matrix_equal(energy_mat, &energy_mat_correct));
   cout << "PASS" << endl;
-
-  delete energy_mat_correct;
 }
 
 
@@ -145,13 +132,10 @@ void test_cost(const Matrix *cost_mat, string prefix){
 
   write_matrix(cost_mat, DATA_FOLDER + "/" +  prefix + "_cost" + OUT_TXT_EXT);
 
-  Matrix* cost_mat_correct = new Matrix;
-  load_matrix(cost_mat_correct, DATA_FOLDER + "/" + prefix + "_cost_correct.txt");
+  auto cost_mat_correct = load_matrix(DATA_FOLDER + "/" + prefix + "_cost_correct.txt");
 
-  assert(Matrix_equal(cost_mat, cost_mat_correct));
+  assert(Matrix_equal(cost_mat, &cost_mat_correct));
   cout << "PASS" << endl;
-
-  delete cost_mat_correct;
 }
 
 void test_find_seam(const int seam[], int n, string prefix){
@@ -173,13 +157,11 @@ void test_remove_seam(const Image* img, const int seam[],
   remove_vertical_seam(removed_img, seam);
   write_image(removed_img, DATA_FOLDER + "/" + prefix + "_removed" + OUT_PPM_EXT);
 
-  Image* removed_img_correct = new Image;
-  load_image(removed_img_correct, DATA_FOLDER + "/" + prefix + "_removed.correct.ppm");
+  auto removed_img_correct = load_image(DATA_FOLDER + "/" + prefix + "_removed.correct.ppm");
 
-  assert(Image_equal(removed_img, removed_img_correct));
+  assert(Image_equal(removed_img, &removed_img_correct));
   cout << "PASS" << endl;
 
-  delete removed_img_correct;
   delete removed_img;
 }
 
@@ -193,19 +175,16 @@ void test_seam_carve(const Image *img, string prefix,
     DATA_FOLDER + "/" + prefix + "_" + to_string(new_width) +
     "x" + to_string(new_height) + OUT_PPM_EXT);
 
-  Image* carved_img_correct = new Image;
-  load_image(carved_img_correct,
-    DATA_FOLDER + "/" + prefix + "_" + to_string(new_width) +
-    "x" + to_string(new_height) + ".correct.ppm");
+  auto carved_img_correct = load_image(DATA_FOLDER + "/" + prefix + "_" + 
+    to_string(new_width) + "x" + to_string(new_height) + ".correct.ppm");
 
-  assert(Image_equal(carved_img, carved_img_correct));
+  assert(Image_equal(carved_img, &carved_img_correct));
   cout << "PASS" << endl;
 
-  delete carved_img_correct;
   delete carved_img;
 }
 
-static void load_matrix(Matrix* mat, string filename){
+static Matrix load_matrix(string filename){
   ifstream fin;
   fin.open(filename.c_str());
 
@@ -216,13 +195,16 @@ static void load_matrix(Matrix* mat, string filename){
 
   int width, height;
   fin >> width >> height;
-  Matrix_init(mat, width, height);
+
+  auto mat = Matrix(width, height);
 
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      fin >> *Matrix_at(mat, r, c);
+      fin >> *Matrix_at(&mat, r, c);
     }
   }
+
+  return mat;
 }
 
 static void write_matrix(const Matrix* mat, string filename){
@@ -230,7 +212,7 @@ static void write_matrix(const Matrix* mat, string filename){
   Matrix_print(mat, fout);
 }
 
-static void load_image(Image* img, string filename){
+static Image load_image(string filename){
   ifstream fin;
   fin.open(filename.c_str());
 
@@ -239,8 +221,12 @@ static void load_image(Image* img, string filename){
     exit(EXIT_FAILURE);
   }
 
-  Image_init(img, fin);
+  auto img = image_from_stream(fin);
+  std::cout << sizeof(img) << std::endl;
+
+  return img;
 }
+
 
 static void write_image(const Image* img, string filename){
   ofstream fout(filename.c_str());

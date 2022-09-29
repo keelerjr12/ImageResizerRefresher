@@ -17,25 +17,22 @@ void rotate_left(Image* img);
 void rotate_right(Image* img);
 
 // REQUIRES: img points to a valid Image.
-//           energy points to a Matrix.
-// MODIFIES: *energy
+// MODIFIES: 
 // EFFECTS:  energy serves as an "output parameter".
 //           The Matrix pointed to by energy is initialized to be the same
 //           size as the given Image, and then the energy matrix for that
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
-void compute_energy_matrix(const Image* img, Matrix* energy);
+Matrix compute_energy_matrix(const Image* img);
 
 // REQUIRES: energy points to a valid Matrix.
-//           cost points to a Matrix.
-//           energy and cost aren't pointing to the same Matrix
-// MODIFIES: *cost
+// MODIFIES: 
 // EFFECTS:  cost serves as an "output parameter".
 //           The Matrix pointed to by cost is initialized to be the same
 //           size as the given energy Matrix, and then the cost matrix is
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
-void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost);
+Matrix compute_vertical_cost_matrix(const Matrix* energy);
 
 // REQUIRES: cost points to a valid Matrix
 //           seam points to an array
