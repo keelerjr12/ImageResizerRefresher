@@ -22,7 +22,7 @@ TEST(test_matrix_basic) {
   ASSERT_EQUAL(mat.get_width(), 5);
   ASSERT_EQUAL(mat.get_height(), 5);
 
-  Matrix_fill(mat, 0);
+  mat.fill(0);
 
   int *ptr = &mat.at(2, 3);
   ASSERT_EQUAL(Matrix_row(mat, ptr), 2);
@@ -33,7 +33,7 @@ TEST(test_matrix_basic) {
   const int *cptr = &mat.at(2, 3);
   ASSERT_EQUAL(*cptr, 42);
 
-  Matrix_fill_border(mat, 2);
+  mat.fill_border(2);
   ASSERT_EQUAL(mat.at(0, 0), 2);
 
   ASSERT_EQUAL(Matrix_max(mat), 42);

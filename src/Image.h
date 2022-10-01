@@ -25,25 +25,36 @@ const int MAX_INTENSITY = 255;
 // Image objects may be copied.
 class Image {
  public:
+
   Image(int width, int height);
-
-  Image(const Image& rhs);
-  Image& operator=(const Image& rhs);
-
-  // REQUIRES: img points to a valid Image
+  
   // EFFECTS:  Returns the width of the Image.
   int get_width() const { return width; }
-
-  // REQUIRES: img points to a valid Image
+   
   // EFFECTS:  Returns the height of the Image.
   int get_height() const { return height; }
 
+  // REQUIRES: 0 <= row && row < img->get_height()
+  //           0 <= column && column < img->get_width()
+  // EFFECTS:  Returns the pixel in the Image at the given row and column.
+  Pixel get_pixel(int row, int column) const;
+
+  // REQUIRES: 0 <= row && row < img->get_height()
+  //           0 <= column && column < img->get_width()
+  // MODIFIES: this
+  // EFFECTS:  Sets the pixel in the Image at the given row and column
+  //           to the given color.
+  void set_pixel(int row, int column, const Pixel& color); 
+      
+  // MODIFIES: this
+  // EFFECTS:  Sets each pixel in the image to the given color.
+  void fill(const Pixel& color);
+  
  private:
 
   int width;
   int height;
 
- public: // TODO: fix this
   Matrix red_channel;
   Matrix green_channel;
   Matrix blue_channel;
@@ -59,6 +70,7 @@ class Image {
 // NOTE:     See the project spec for a discussion of PPM format.
 Image image_from_stream(std::istream& is);
 
+
 // REQUIRES: img points to a valid Image
 // MODIFIES: os
 // EFFECTS:  Writes the image to the given output stream in PPM format.
@@ -73,28 +85,7 @@ Image image_from_stream(std::istream& is);
 //           int is followed by a space. This means that there will be an
 //           "extra" space at the end of each line. See the project spec
 //           for an example.
-void Image_print(const Image* img, std::ostream& os);
+void Image_print(const Image& img, std::ostream& os);
 
-int Image_height(const Image* img);
-
-// REQUIRES: img points to a valid Image
-//           0 <= row && row < Image_height(img)
-//           0 <= column && column < Image_width(img)
-// EFFECTS:  Returns the pixel in the Image at the given row and column.
-// NOTE:     Do NOT use new or delete here.
-Pixel Image_get_pixel(const Image* img, int row, int column);
-
-// REQUIRES: img points to a valid Image
-//           0 <= row && row < Image_height(img)
-//           0 <= column && column < Image_width(img)
-// MODIFIES: *img
-// EFFECTS:  Sets the pixel in the Image at the given row and column
-//           to the given color.
-void Image_set_pixel(Image* img, int row, int column, Pixel color);
-
-// REQUIRES: img points to a valid Image
-// MODIFIES: *img
-// EFFECTS:  Sets each pixel in the image to the given color.
-void Image_fill(Image* img, Pixel color);
 
 #endif // IMAGE_H

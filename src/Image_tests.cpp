@@ -23,14 +23,14 @@ TEST(test_print_basic) {
   auto height = 2;
   auto img = Image(width, height);
 
-  Image_set_pixel(&img, 0, 0, red);
-  Image_set_pixel(&img, 0, 1, green);
-  Image_set_pixel(&img, 1, 0, blue);
-  Image_set_pixel(&img, 1, 1, white);
+  img.set_pixel(0, 0, red);
+  img.set_pixel(0, 1, green);
+  img.set_pixel(1, 0, blue);
+  img.set_pixel(1, 1, white);
 
   // Capture our output
   ostringstream s;
-  Image_print(&img, s);
+  Image_print(img, s);
 
   // Correct output
   ostringstream correct;

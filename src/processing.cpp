@@ -14,8 +14,8 @@ using namespace std;
 void rotate_left(Image* img) {
 
   // for convenience
-  int width = Image_width(img);
-  int height = Image_height(img);
+  int width = img->get_width();
+  int height = img->get_height();
 
   // auxiliary image to temporarily store rotated image
   auto aux = Image(width, height);
@@ -23,7 +23,7 @@ void rotate_left(Image* img) {
   // iterate through pixels and place each where it goes in temp
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      Image_set_pixel(&aux, width - 1 - c, r, Image_get_pixel(img, r, c));
+      aux.set_pixel(width - 1 - c, r, img->get_pixel(r, c));
     }
   }
 
@@ -40,8 +40,8 @@ void rotate_left(Image* img) {
 void rotate_right(Image* img){
 
   // for convenience
-  int width = Image_width(img);
-  int height = Image_height(img);
+  int width = img->get_width();
+  int height = img->get_height();
 
   // auxiliary image to temporarily store rotated image
   auto aux = Image(width, height);
@@ -49,7 +49,7 @@ void rotate_right(Image* img){
   // iterate through pixels and place each where it goes in temp
   for (int r = 0; r < height; ++r) {
     for (int c = 0; c < width; ++c) {
-      Image_set_pixel(&aux, c, height - 1 - r, Image_get_pixel(img, r, c));
+      aux.set_pixel(c, height - 1 - r, img->get_pixel(r, c));
     }
   }
 
@@ -88,16 +88,16 @@ static int squared_difference(Pixel p1, Pixel p2) {
 Matrix compute_energy_matrix(const Image* img) {
     assert(img);
 
-    auto energy = Matrix(img->width, img->height);
+    auto energy = Matrix(img->get_width(), img->get_height());
 
     auto max = std::numeric_limits<int>::min();
     
     for (auto r = 1; r < energy.get_height() - 1; ++r) {
         for (auto c = 1; c < energy.get_width() - 1; ++c) {
-            auto pixel_n = Image_get_pixel(img, r-1, c); 
-            auto pixel_s = Image_get_pixel(img, r+1, c); 
-            auto pixel_w = Image_get_pixel(img, r, c-1); 
-            auto pixel_e = Image_get_pixel(img, r, c+1); 
+            auto pixel_n = img->get_pixel(r-1, c); 
+            auto pixel_s = img->get_pixel(r+1, c); 
+            auto pixel_w = img->get_pixel(r, c-1); 
+            auto pixel_e = img->get_pixel(r, c+1); 
 
             auto e = squared_difference(pixel_n, pixel_s) + squared_difference(pixel_w, pixel_e);
             energy.at(r, c) = e;
@@ -108,7 +108,7 @@ Matrix compute_energy_matrix(const Image* img) {
         }
     }
 
-    Matrix_fill_border(energy, max);
+    energy.fill_border(max);
 
     return energy;
 }
@@ -174,8 +174,8 @@ void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
 
 // REQUIRES: img points to a valid Image with width >= 2
 //           seam points to an array
-//           the size of seam is == Image_height(img)
-//           each element x in seam satisfies 0 <= x < Image_width(img)
+//           the size of seam is == img->get_height()
+//           each element x in seam satisfies 0 <= x < img->get_width()
 // MODIFIES: *img
 // EFFECTS:  Removes the given vertical seam from the Image. That is, one
 //           pixel will be removed from every row in the image. The pixel
@@ -190,7 +190,7 @@ void remove_vertical_seam(Image *img, const int seam[]) {
 
 
 // REQUIRES: img points to a valid Image
-//           0 < newWidth && newWidth <= Image_width(img)
+//           0 < newWidth && newWidth <= img->get_width()
 // MODIFIES: *img
 // EFFECTS:  Reduces the width of the given Image to be newWidth by using
 //           the seam carving algorithm. See the spec for details.
@@ -201,7 +201,7 @@ void seam_carve_width(Image *img, int newWidth) {
 }
 
 // REQUIRES: img points to a valid Image
-//           0 < newHeight && newHeight <= Image_height(img)
+//           0 < newHeight && newHeight <= img->get_height()
 // MODIFIES: *img
 // EFFECTS:  Reduces the height of the given Image to be newHeight.
 // NOTE:     This is equivalent to first rotating the Image 90 degrees left,
@@ -212,8 +212,8 @@ void seam_carve_height(Image *img, int newHeight) {
 }
 
 // REQUIRES: img points to a valid Image
-//           0 < newWidth && newWidth <= Image_width(img)
-//           0 < newHeight && newHeight <= Image_height(img)
+//           0 < newWidth && newWidth <= img->get_width()
+//           0 < newHeight && newHeight <= img->get_height()
 // MODIFIES: *img
 // EFFECTS:  Reduces the width and height of the given Image to be newWidth
 //           and newHeight, respectively.

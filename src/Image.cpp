@@ -7,7 +7,7 @@
 
 // REQUIRES: 0 < width && width <= MAX_MATRIX_WIDTH
 //           0 < height && height <= MAX_MATRIX_HEIGHT
-// MODIFIES: img
+// MODIFIES: this
 // EFFECTS:  Initializes the Image with the given width and height.
 Image::Image(int width, int height) 
   : width(width), height(height), red_channel(width, height),
@@ -17,56 +17,79 @@ Image::Image(int width, int height)
   assert(0 < height && height <= MAX_MATRIX_HEIGHT);
 }
 
-Image::Image(const Image& rhs) 
-  : red_channel(rhs.red_channel), green_channel(rhs.green_channel),
-    blue_channel(rhs.blue_channel) {
+// REQUIRES: 0 <= row && row < img->get_height()
+//           0 <= column && column < img->get_width()
+// EFFECTS:  Returns the pixel in the Image at the given row and column.
+Pixel Image::get_pixel(int row, int column) const {
+  assert(0 <= row && row < get_height());
+  assert(0 <= column && column < get_width());
 
-  std::cout << "Copy ctor" << std::endl;
+  Pixel px;
+  px.r = red_channel.at(row, column);
+  px.g = green_channel.at(row, column);
+  px.b = blue_channel.at(row, column);
+
+  return px;
 }
 
-Image& Image::operator=(const Image& rhs) {
-    std::cout << "Copy assignment ctor" << std::endl;
 
-    return *this;
+// REQUIRES: 0 <= row && row < img->get_height()
+//           0 <= column && column < img->get_width()
+// MODIFIES: this
+// EFFECTS:  Sets the pixel in the Image at the given row and column
+//           to the given color.
+void Image::set_pixel(int row, int column, const Pixel& color) {
+  assert(0 <= row && row < get_height());
+  assert(0 <= column && column < get_width());
+
+  red_channel.at(row, column) = color.r;
+  green_channel.at(row, column) = color.g;
+  blue_channel.at(row, column) = color.b;
 }
+
+
+// REQUIRES: img points to a valid Image
+// MODIFIES: this
+// EFFECTS:  Sets each pixel in the image to the given color.
+void Image::fill(const Pixel& color) {
+  red_channel.fill(color.r);
+  green_channel.fill(color.g);
+  blue_channel.fill(color.b);
+}
+
 
 // REQUIRES: is contains an image in PPM format without comments
 //           (any kind of whitespace is ok)
 // MODIFIES: 
 // EFFECTS:  Initializes the Image by reading in an image in PPM format
 //           from the given input stream.
-// NOTE:     See the project spec for a discussion of PPM format.
-// NOTE:     Do NOT use new or delete here.
 Image image_from_stream(std::istream& is) {
-    std::string format;
-    is >> format;
+  std::string format;
+  is >> format;
 
-    int width;
-    is >> width;
+  int width;
+  is >> width;
 
-    int height;
-    is >> height;
+  int height;
+  is >> height;
 
-    int max_rgb;
-    is >> max_rgb;
+  int max_rgb;
+  is >> max_rgb;
 
-    auto img = Image(width, height);
-    
-    auto pixel = 0;
-    int r, g, b;
+  auto img = Image(width, height);
+  
+  auto px_idx = 0;
+  int r, g, b;
 
-    while (is >> r >> g >> b) {
-        img.red_channel.at(pixel / width, pixel % width) = r;
-        img.green_channel.at(pixel / width, pixel % width) = g;
-        img.blue_channel.at(pixel / width, pixel % width) = b;
+  while (is >> r >> g >> b) {
+    auto px = Pixel {r, g, b};
+    img.set_pixel(px_idx / width, px_idx % width, px);
+    ++px_idx;
+  }
 
-        ++pixel;
-    }
-
-    return img;
+  return img;
 }
 
-// REQUIRES: img points to a valid Image
 // EFFECTS:  Writes the image to the given output stream in PPM format.
 //           You must use the kind of whitespace specified here.
 //           First, prints out the header for the image like this:
@@ -79,74 +102,19 @@ Image image_from_stream(std::istream& is) {
 //           int is followed by a space. This means that there will be an
 //           "extra" space at the end of each line. See the project spec
 //           for an example.
-void Image_print(const Image* img, std::ostream& os) {
-    os << "P3" << std::endl;
-    os << img->get_width() << " " << img->get_height() << std::endl;
-    os << "255" << std::endl;
+void Image_print(const Image& img, std::ostream& os) {
+  os << "P3" << std::endl;
+  os << img.get_width() << " " << img.get_height() << std::endl;
+  os << "255" << std::endl;
 
-    for (auto row = 0; row < Image_height(img); ++row) {
-        for (auto col = 0; col < Image_width(img); ++col) {
-            os << img->red_channel.at(row, col) << " ";
-            os << img->green_channel.at(row, col) << " ";
-            os << img->blue_channel.at(row, col) << " ";
-        }
-
-        os << std::endl;
+  for (auto row = 0; row < img.get_height(); ++row) {
+    for (auto col = 0; col < img.get_width(); ++col) {
+      auto px = img.get_pixel(row, col);
+      os << px.r << " ";
+      os << px.g << " ";
+      os << px.b << " ";
     }
-}
 
-// REQUIRES: img points to a valid Image
-// EFFECTS:  Returns the width of the Image.
-int Image_width(const Image* img) {
-    return img->width;
-}
-
-// REQUIRES: img points to a valid Image
-// EFFECTS:  Returns the height of the Image.
-int Image_height(const Image* img) {
-    return img->height;
-}
-
-// REQUIRES: img points to a valid Image
-//           0 <= row && row < Image_height(img)
-//           0 <= column && column < Image_width(img)
-// EFFECTS:  Returns the pixel in the Image at the given row and column.
-Pixel Image_get_pixel(const Image* img, int row, int column) {
-    assert(img);
-    assert(0 <= row && row < Image_height(img));
-    assert(0 <= column && column < Image_width(img));
-
-    Pixel px;
-    px.r = img->red_channel.at(row, column);
-    px.g = img->green_channel.at(row, column);
-    px.b = img->blue_channel.at(row, column);
-
-    return px;
-}
-
-// REQUIRES: img points to a valid Image
-//           0 <= row && row < Image_height(img)
-//           0 <= column && column < Image_width(img)
-// MODIFIES: *img
-// EFFECTS:  Sets the pixel in the Image at the given row and column
-//           to the given color.
-void Image_set_pixel(Image* img, int row, int column, Pixel color) {
-    assert(img);
-    assert(0 <= row && row < Image_height(img));
-    assert(0 <= column && column < Image_width(img));
-
-    img->red_channel.at(row, column) = color.r;
-    img->green_channel.at(row, column) = color.g;
-    img->blue_channel.at(row, column) = color.b;
-}
-
-// REQUIRES: img points to a valid Image
-// MODIFIES: *img
-// EFFECTS:  Sets each pixel in the image to the given color.
-void Image_fill(Image* img, Pixel color) {
-    assert(img);
-
-    Matrix_fill(img->red_channel, color.r);
-    Matrix_fill(img->green_channel, color.g);
-    Matrix_fill(img->blue_channel, color.b);
+    os << std::endl;
+  }
 }

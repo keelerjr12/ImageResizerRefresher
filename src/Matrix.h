@@ -19,26 +19,21 @@ class Matrix{
 
  public:
      
-  // REQUIRES: mat points to a Matrix
-  //           0 < width && width <= MAX_MATRIX_WIDTH
+  // REQUIRES: 0 < width && width <= MAX_MATRIX_WIDTH
   //           0 < height && height <= MAX_MATRIX_HEIGHT
-  // MODIFIES: *mat
   // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
   Matrix(int width, int height);
 
   Matrix(const Matrix& rhs);
   
-  // REQUIRES: mat points to a valid Matrix
   // EFFECTS:  Returns the width of the Matrix.
   int get_width() const { return width; }
   
-  // REQUIRES: mat points to a valid Matrix
   // EFFECTS:  Returns the height of the Matrix.
   int get_height() const { return height; }
 
 
-  // REQUIRES: mat points to a valid Matrix
-  //           0 <= row && row < mat->get_height()
+  // REQUIRES: 0 <= row && row < mat->get_height()
   //           0 <= column && column < mat->get_width()
   //
   // MODIFIES: (The returned pointer may be used to modify an
@@ -46,9 +41,18 @@ class Matrix{
   // EFFECTS:  Returns a pointer to the element in the Matrix
   //           at the given row and column.
   int& at(int row, int column);
-
   const int& at(int row, int column) const;
   
+  // MODIFIES: this
+  // EFFECTS:  Sets each element of the Matrix to the given value.
+  void fill(int value);
+  
+  // MODIFIES: this
+  // EFFECTS:  Sets each element on the border of the Matrix to
+  //           the given value. These are all elements in the first/last
+  //           row or the first/last column.
+  void fill_border(int value);
+
  private:
   int width;
   int height;
@@ -82,23 +86,8 @@ int Matrix_column(const Matrix& mat, const int* ptr);
 
 
 // REQUIRES: mat points to a valid Matrix
-// MODIFIES: *mat
-// EFFECTS:  Sets each element of the Matrix to the given value.
-void Matrix_fill(Matrix& mat, int value);
-
-
-// REQUIRES: mat points to a valid Matrix
-// MODIFIES: *mat
-// EFFECTS:  Sets each element on the border of the Matrix to
-//           the given value. These are all elements in the first/last
-//           row or the first/last column.
-void Matrix_fill_border(Matrix& mat, int value);
-
-
-// REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat);
-
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < mat->get_height()

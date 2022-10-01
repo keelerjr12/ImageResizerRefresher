@@ -19,10 +19,11 @@ Matrix::Matrix(int width, int height)
   this->width = width;
   this->height = height;
 
-  Matrix_fill(*this, 0);
+  fill(0);
 }
 
-Matrix::Matrix(const Matrix& rhs) : data(rhs.data) {
+Matrix::Matrix(const Matrix& rhs) : width(rhs.width),
+    height(rhs.height), data(rhs.data) {
 }
 
 // REQUIRES: 0 <= row && row < mat->get_height()
@@ -32,17 +33,44 @@ Matrix::Matrix(const Matrix& rhs) : data(rhs.data) {
 // EFFECTS:  Returns a pointer to the element in the Matrix
 //           at the given row and column.
 int& Matrix::at(int row, int column) {
-    assert(0 <= row && row <= get_height());
-    assert(0 <= column && column <= get_width());
+  assert(0 <= row && row <= get_height());
+  assert(0 <= column && column <= get_width());
 
-    return data[row * get_width() + column];
+  return data[row * get_width() + column];
 }
 
 const int& Matrix::at(int row, int column) const {
     assert(0 <= row && row <= get_height());
     assert(0 <= column && column <= get_width());
-
+    
     return data[row * get_width() + column];
+}
+
+// EFFECTS:  Sets each element of the Matrix to the given value.
+void Matrix::fill(int value) {
+  for (auto r = 0; r < get_height(); ++r) {
+    for (auto c = 0; c < get_width(); ++c) {
+      at(r, c) = value;
+    }
+  }
+}
+
+// MODIFIES: *mat
+// EFFECTS:  Sets each element on the border of the Matrix to
+//           the given value. These are all elements in the first/last
+//           row or the first/last column.
+void Matrix::fill_border(int value) {
+    // Fill top * bottoms rows
+    for (auto c = 0; c < get_width(); ++c) {
+        at(0, c) = value;
+        at(get_height() - 1, c) = value;
+    }
+    
+    // Fill left & right columns
+    for (auto r = 0; r < get_height(); ++r) {
+        at(r, 0) = value;
+        at(r, get_width() - 1) = value;
+    }
 }
 
 // REQUIRES: 
@@ -78,53 +106,13 @@ int Matrix_column(const Matrix& mat, const int* ptr) {
 }
 
 
-// REQUIRES: 0 <= row && row < mat->get_height()
-//           0 <= column && column < mat->get_width()
-//
-// EFFECTS:  Returns a pointer-to-const to the element in
-//           the Matrix at the given row and column.
-const int* Matrix_at(const Matrix& mat, int row, int column) {
-    assert(0 <= row && row <= mat.get_height());
-    assert(0 <= column && column <= mat.get_width());
-
-    return &mat.data[row * mat.get_width() + column];
-}
-
-// MODIFIES: *mat
-// EFFECTS:  Sets each element of the Matrix to the given value.
-void Matrix_fill(Matrix& mat, int value) {
-    for (auto r = 0; r < mat.get_height(); ++r) {
-        for (auto c = 0; c < mat.get_width(); ++c) {
-            mat.at(r, c) = value;
-        }
-    }
-}
-
-// MODIFIES: *mat
-// EFFECTS:  Sets each element on the border of the Matrix to
-//           the given value. These are all elements in the first/last
-//           row or the first/last column.
-void Matrix_fill_border(Matrix& mat, int value) {
-    // Fill top * bottoms rows
-    for (auto c = 0; c < mat.get_width(); ++c) {
-        mat.at(0, c) = value;
-        mat.at(mat.get_height() - 1, c) = value;
-    }
-    
-    // Fill left & right columns
-    for (auto r = 0; r < mat.get_height(); ++r) {
-        mat.at(r, 0) = value;
-        mat.at(r, mat.get_width() - 1) = value;
-    }
-}
-
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat) {
     auto max = std::numeric_limits<int>::min();
 
     for (auto r = 0; r < mat.get_height(); ++r) {
         for (auto c = 0; c < mat.get_width(); ++c) {
-            auto curr_val = *Matrix_at(mat, r, c);
+            auto curr_val = mat.at(r, c);
             
             if (max < curr_val) {
                 max = curr_val;
@@ -150,11 +138,11 @@ int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
     assert(0 <= column_start && column_end <= mat.get_width());
     assert(column_start < column_end);
     
-    auto min = *Matrix_at(mat, row, column_start);
+    auto min = mat.at(row, column_start);
     auto min_c = column_start;
 
     for (auto c = column_start + 1; c < column_end; ++c) {
-       auto val = *Matrix_at(mat, row, c);
+       auto val = mat.at(row, c);
        
        if (val < min) {
            min = val;
@@ -177,10 +165,10 @@ int Matrix_min_value_in_row(const Matrix& mat, int row,
     assert(0 <= column_start && column_end <= mat.get_width());
     assert(column_start < column_end);
     
-    auto min = *Matrix_at(mat, row, column_start);
+    auto min = mat.at(row, column_start);
 
     for (auto c = column_start + 1; c < column_end; ++c) {
-       auto val = *Matrix_at(mat, row, c);
+       auto val = mat.at(row, c);
        
        if (val < min) {
            min = val;

@@ -91,9 +91,7 @@ void test_all(string prefix, int sizes[], int num_sizes){
 }
 
 void test_rotate(const Image *img, string prefix){
-  std::cout << "here1" << std::endl;
   auto rotated_img = Image(*img);
-  std::cout << "here2" << std::endl;
 
   // Test left rotation
   cout << "Testing " << prefix << " rotate left..." << flush;
@@ -222,7 +220,6 @@ static Image load_image(string filename){
   }
 
   auto img = image_from_stream(fin);
-  std::cout << sizeof(img) << std::endl;
 
   return img;
 }
@@ -230,7 +227,7 @@ static Image load_image(string filename){
 
 static void write_image(const Image* img, string filename){
   ofstream fout(filename.c_str());
-  Image_print(img, fout);
+  Image_print(*img, fout);
 }
 
 static void load_seam(int seam[], string filename){

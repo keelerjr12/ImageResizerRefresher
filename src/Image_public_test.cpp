@@ -25,14 +25,14 @@ TEST(test_image_basic) {
 
   auto img = Image(width, height);
 
-  ASSERT_EQUAL(Image_width(&img), 3);
-  ASSERT_EQUAL(Image_height(&img), 4);
+  ASSERT_EQUAL(img.get_width(), 3);
+  ASSERT_EQUAL(img.get_height(), 4);
 
-  Image_fill(&img, red);
-  ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, 2, 2), red));
+  img.fill(red);
+  ASSERT_TRUE(Pixel_equal(img.get_pixel(2, 2), red));
 
-  Image_set_pixel(&img, 0, 0, green);
-  ASSERT_TRUE(Pixel_equal(Image_get_pixel(&img, 0, 0), green));
+  img.set_pixel(0, 0, green);
+  ASSERT_TRUE(Pixel_equal(img.get_pixel(0, 0), green));
 }
 
 TEST(test_image_from_and_to_stream) {
@@ -44,9 +44,8 @@ TEST(test_image_from_and_to_stream) {
   // Should be well behaved when you print it though!
   string output_correct = "P3\n2 2\n255\n255 0 0 0 255 0 \n0 0 255 255 255 255 \n";
   std::ostringstream ss_output;
-  Image_print(&img, ss_output);
+  Image_print(img, ss_output);
   string actual = ss_output.str();
-  std::cout << actual << std::endl;
 
   ASSERT_EQUAL(actual, output_correct);
 }
