@@ -5,32 +5,23 @@
 #include <limits>
 #include <memory>
 
-// REQUIRES: mat points to a Matrix
-//           0 < width && width <= MAX_MATRIX_WIDTH
-//           0 < height && height <= MAX_MATRIX_HEIGHT
-// MODIFIES: *mat
-// EFFECTS:  Initializes *mat as a Matrix with the given width and height.
-Matrix::Matrix(int width, int height) 
-  : data(MAX_MATRIX_WIDTH * MAX_MATRIX_HEIGHT) {
-
-  assert(0 < width && width <= MAX_MATRIX_WIDTH);
-  assert(0 < height && height <= MAX_MATRIX_HEIGHT);
-
-  this->width = width;
-  this->height = height;
+// EFFECTS:  Initializes this as a Matrix with the given width and height.
+Matrix::Matrix(int width, int height) : width(width), height(height), 
+    data(width * height) {
 
   fill(0);
 }
 
-Matrix::Matrix(const Matrix& rhs) : width(rhs.width),
-    height(rhs.height), data(rhs.data) {
+// EFFECTS:  this as a Matrix with the given width and height.
+Matrix::Matrix(const Matrix& rhs) : width(rhs.width), height(rhs.height),
+    data(rhs.data) {
 }
 
 // REQUIRES: 0 <= row && row < mat->get_height()
 //           0 <= column && column < mat->get_width()
-// MODIFIES: (The returned pointer may be used to modify an
+// MODIFIES: (The returned reference may be used to modify an
 //            element in the Matrix.)
-// EFFECTS:  Returns a pointer to the element in the Matrix
+// EFFECTS:  Returns a reference to the element in the Matrix
 //           at the given row and column.
 int& Matrix::at(int row, int column) {
   assert(0 <= row && row <= get_height());
@@ -40,22 +31,22 @@ int& Matrix::at(int row, int column) {
 }
 
 const int& Matrix::at(int row, int column) const {
-    assert(0 <= row && row <= get_height());
-    assert(0 <= column && column <= get_width());
-    
-    return data[row * get_width() + column];
+  assert(0 <= row && row <= get_height());
+  assert(0 <= column && column <= get_width());
+  
+  return data[row * get_width() + column];
 }
 
+// MODIFIES: Data vector
 // EFFECTS:  Sets each element of the Matrix to the given value.
 void Matrix::fill(int value) {
-  for (auto r = 0; r < get_height(); ++r) {
-    for (auto c = 0; c < get_width(); ++c) {
-      at(r, c) = value;
-    }
+  for (auto &el : data)
+  {
+    el = value;
   }
 }
 
-// MODIFIES: *mat
+// MODIFIES: Data vector
 // EFFECTS:  Sets each element on the border of the Matrix to
 //           the given value. These are all elements in the first/last
 //           row or the first/last column.
@@ -73,7 +64,6 @@ void Matrix::fill_border(int value) {
     }
 }
 
-// REQUIRES: 
 // MODIFIES: os
 // EFFECTS:  First, prints the width and height for the Matrix to os:
 //             WIDTH [space] HEIGHT [newline]

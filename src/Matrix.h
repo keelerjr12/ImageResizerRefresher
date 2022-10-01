@@ -19,11 +19,10 @@ class Matrix{
 
  public:
      
-  // REQUIRES: 0 < width && width <= MAX_MATRIX_WIDTH
-  //           0 < height && height <= MAX_MATRIX_HEIGHT
-  // EFFECTS:  Initializes *mat as a Matrix with the given width and height.
+  // EFFECTS:  Initializes this as a Matrix with the given width and height.
   Matrix(int width, int height);
 
+  // EFFECTS:  this as a Matrix with the given width and height.
   Matrix(const Matrix& rhs);
   
   // EFFECTS:  Returns the width of the Matrix.
@@ -35,19 +34,18 @@ class Matrix{
 
   // REQUIRES: 0 <= row && row < mat->get_height()
   //           0 <= column && column < mat->get_width()
-  //
-  // MODIFIES: (The returned pointer may be used to modify an
+  // MODIFIES: (The returned reference may be used to modify an
   //            element in the Matrix.)
-  // EFFECTS:  Returns a pointer to the element in the Matrix
+  // EFFECTS:  Returns a reference to the element in the Matrix
   //           at the given row and column.
   int& at(int row, int column);
   const int& at(int row, int column) const;
   
-  // MODIFIES: this
+  // MODIFIES: Data vector
   // EFFECTS:  Sets each element of the Matrix to the given value.
   void fill(int value);
   
-  // MODIFIES: this
+  // MODIFIES: Data vector
   // EFFECTS:  Sets each element on the border of the Matrix to
   //           the given value. These are all elements in the first/last
   //           row or the first/last column.
@@ -62,7 +60,6 @@ class Matrix{
 };
 
 
-// REQUIRES: mat points to a valid Matrix
 // MODIFIES: os
 // EFFECTS:  First, prints the width and height for the Matrix to os:
 //             WIDTH [space] HEIGHT [newline]
@@ -73,19 +70,17 @@ class Matrix{
 void Matrix_print(const Matrix& mat, std::ostream& os);
 
 
-// REQUIRES: mat points to a valid Matrix
-//           ptr points to an element in the Matrix
+// REQUIRES: ptr points to an element in the Matrix
 // EFFECTS:  Returns the row of the element pointed to by ptr.
 int Matrix_row(const Matrix& mat, const int* ptr);
 
 
 // REQUIRES: mat points to a valid Matrix
-//           ptr point to an element in the Matrix
+//           tr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix& mat, const int* ptr);
 
 
-// REQUIRES: mat points to a valid Matrix
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat);
 
