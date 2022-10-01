@@ -74,13 +74,15 @@ void Matrix::fill_border(int value) {
 void Matrix_print(const Matrix& mat, std::ostream& os) {
   os << mat.get_width() << " " <<  mat.get_height() << std::endl;
 
-  for (auto r = 0; r < mat.get_height(); ++r) {
-    for (auto c = 0; c < mat.get_width(); ++c) {
-      os << mat.at(r, c) << " ";
-    }
-
-    os << std::endl;
-  }
+//  for (auto r = 0; r < mat.get_height(); ++r) {
+//    for (auto c = 0; c < mat.get_width(); ++c) {
+//      os << mat.at(r, c) << " ";
+//    }
+//
+//    os << std::endl;
+//  }
+  for (auto it = mat.cbegin(); it != mat.cend(); ++it) 
+    os << *it << " ";
 }
 
 // REQUIRES: ptr points to an element in the Matrix

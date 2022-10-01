@@ -31,7 +31,6 @@ class Matrix{
   // EFFECTS:  Returns the height of the Matrix.
   int get_height() const { return height; }
 
-
   // REQUIRES: 0 <= row && row < mat->get_height()
   //           0 <= column && column < mat->get_width()
   // MODIFIES: (The returned reference may be used to modify an
@@ -40,6 +39,11 @@ class Matrix{
   //           at the given row and column.
   int& at(int row, int column);
   const int& at(int row, int column) const;
+  
+  std::vector<int>::iterator begin() { return data.begin(); } 
+  std::vector<int>::iterator end() { return data.end(); } 
+  std::vector<int>::const_iterator cbegin() const { return data.cbegin(); } 
+  std::vector<int>::const_iterator cend() const { return data.cend(); } 
   
   // MODIFIES: Data vector
   // EFFECTS:  Sets each element of the Matrix to the given value.
