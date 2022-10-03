@@ -5,6 +5,10 @@
 #include <limits>
 #include <memory>
 
+/********** Matrix ********
+ *
+ */
+
 // EFFECTS:  Initializes this as a Matrix with the given width and height.
 Matrix::Matrix(int width, int height) : width(width), height(height), 
     data(width * height) {
@@ -37,6 +41,16 @@ const int& Matrix::at(int row, int column) const {
   return data[row * get_width() + column];
 }
 
+// EFFECTS:  Returns the row of the element pointed to by ptr.
+int Matrix::row_index(const int& el) const {
+    return (&el - &data[0]) / get_width();
+}
+
+// EFFECTS:  Returns the column of the element pointed to by ptr.
+int Matrix::col_index(const int& el) const {
+    return (&el - &data[0]) % get_width();
+}
+
 // MODIFIES: Data vector
 // EFFECTS:  Sets each element of the Matrix to the given value.
 void Matrix::fill(int value) {
@@ -64,6 +78,92 @@ void Matrix::fill_border(int value) {
     }
 }
 
+
+/********** Matrix::RowVecIterator ********
+ *
+ */
+
+Matrix::RowVecIterator::RowVecIterator(Matrix& mat, int row, int col) : mat(mat), row(row), col(col) { }
+
+Matrix::RowVecIterator& Matrix::RowVecIterator::operator++() {
+  ++col;
+  return *this;
+}
+
+Matrix::RowVecIterator Matrix::RowVecIterator::operator++(int) {
+  auto tmp = *this;
+  ++(*this);
+  return tmp;
+}
+
+Matrix::RowVecIterator::reference Matrix::RowVecIterator::operator*() {
+  return mat.at(row, col);
+}
+bool operator==(const Matrix::RowVecIterator& lhs, const Matrix::RowVecIterator& rhs) {
+  return (lhs.mat == rhs.mat) && (lhs.row == rhs.row) && (lhs.col == rhs.col);
+}
+
+bool operator!=(const Matrix::RowVecIterator& lhs, const Matrix::RowVecIterator& rhs) {
+  return !(lhs == rhs);
+}
+
+/********** Matrix::RowIterator ********
+ *
+ */
+
+Matrix::RowIterator::RowIterator(const Matrix& mat, int row) : mat(mat), row(row), col(0) { }
+
+Matrix::RowIterator& Matrix::RowIterator::operator++() {
+  ++row;
+  return *this;
+}
+
+Matrix::RowIterator Matrix::RowIterator::operator++(int) {
+  auto tmp = *this;
+  ++(*this);
+  return tmp;
+}
+
+Matrix::RowIterator::value_type Matrix::RowIterator::operator*() const {
+  return RowVecIterator(mat, row, col);
+}
+
+bool operator==(const Matrix::row_iterator& lhs, const Matrix::row_iterator& rhs) {
+  return (lhs.mat == rhs.mat) && (lhs.row == rhs.row) && (lhs.col == rhs.col);
+}
+
+bool operator!=(const Matrix::row_iterator& lhs, const Matrix::row_iterator& rhs) {
+  return !(lhs == rhs);
+}
+
+/********** Matrix cont. ********
+ *
+ */
+
+Matrix::row_iterator Matrix::row_begin(int row_index) {
+  return row_iterator(*this, row_index);
+}
+
+Matrix::row_iterator Matrix::row_end() { // TODO: change this to take in a row_index ofw here to end
+  return row_iterator(*this, get_height());
+}
+
+Matrix::const_row_iterator Matrix::row_cbegin(int row_index) const {
+  return const_row_iterator(*this, row_index);
+}
+
+Matrix::const_row_iterator Matrix::row_cend() const { // TODO: change this to take in a row_index ofw here to end
+  return const_row_iterator(*this, get_height());
+}
+
+bool operator==(const Matrix& lhs, const Matrix& rhs) {
+  return lhs.data == rhs.data;
+}
+
+bool operator!=(const Matrix& lhs, const Matrix& rhs) {
+  return !(lhs == rhs);
+}
+
 // MODIFIES: os
 // EFFECTS:  First, prints the width and height for the Matrix to os:
 //             WIDTH [space] HEIGHT [newline]
@@ -74,42 +174,23 @@ void Matrix::fill_border(int value) {
 void Matrix_print(const Matrix& mat, std::ostream& os) {
   os << mat.get_width() << " " <<  mat.get_height() << std::endl;
 
-//  for (auto r = 0; r < mat.get_height(); ++r) {
-//    for (auto c = 0; c < mat.get_width(); ++c) {
-//      os << mat.at(r, c) << " ";
-//    }
-//
-//    os << std::endl;
-//  }
-  for (auto it = mat.cbegin(); it != mat.cend(); ++it) 
-    os << *it << " ";
-}
+  for (auto row = mat.row_cbegin(0); row != mat.row_cend(); ++row) {
+    for (auto el : *row) {
+      std::cout << el << ' ';
+    }
 
-// REQUIRES: ptr points to an element in the Matrix
-// EFFECTS:  Returns the row of the element pointed to by ptr.
-int Matrix_row(const Matrix& mat, const int* ptr) {
-    return (ptr - &mat.data[0]) / mat.get_width();
+    std::cout << '\n';
+  }
 }
-
-// REQUIRES: ptr point to an element in the Matrix
-// EFFECTS:  Returns the column of the element pointed to by ptr.
-int Matrix_column(const Matrix& mat, const int* ptr) {
-    return (ptr - &mat.data[0]) % mat.get_width();
-}
-
 
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat) {
     auto max = std::numeric_limits<int>::min();
 
-    for (auto r = 0; r < mat.get_height(); ++r) {
-        for (auto c = 0; c < mat.get_width(); ++c) {
-            auto curr_val = mat.at(r, c);
-            
-            if (max < curr_val) {
-                max = curr_val;
-            }
-        }
+    for (auto it = mat.cbegin(); it != mat.cend(); ++it) {
+      if (max < *it) {
+        max = *it;
+      }
     }
 
     return max;

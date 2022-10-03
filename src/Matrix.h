@@ -1,13 +1,9 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-/* Matrix.h
- * Project UID af1f95f547e44c8ea88730dfb185559d
- * Originally written by James Juett at the University of Michigan
- * for project 3 in EECS 280, Winter 2016.
- */
-
+#include <cstddef>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 const int MAX_MATRIX_WIDTH = 500;
@@ -39,11 +35,12 @@ class Matrix{
   //           at the given row and column.
   int& at(int row, int column);
   const int& at(int row, int column) const;
-  
-  std::vector<int>::iterator begin() { return data.begin(); } 
-  std::vector<int>::iterator end() { return data.end(); } 
-  std::vector<int>::const_iterator cbegin() const { return data.cbegin(); } 
-  std::vector<int>::const_iterator cend() const { return data.cend(); } 
+
+  // EFFECTS:  Returns the row of the element pointed to by ptr.
+  int row_index(const int& el) const;
+
+  // EFFECTS:  Returns the column of the element pointed to by ptr.
+  int col_index(const int& el) const;
   
   // MODIFIES: Data vector
   // EFFECTS:  Sets each element of the Matrix to the given value.
@@ -55,11 +52,87 @@ class Matrix{
   //           row or the first/last column.
   void fill_border(int value);
 
+  using iterator = std::vector<int>::iterator;
+  using const_iterator = std::vector<int>::const_iterator;
+
+  iterator begin() { return data.begin(); } 
+  iterator end() { return data.end(); } 
+  const_iterator cbegin() const { return data.cbegin(); } 
+  const_iterator cend() const { return data.cend(); } 
+  
+  class RowVecIterator {
+
+   public:
+
+    using value_type = int; 
+    using difference_type = std::ptrdiff_t; 
+    using reference = int&; 
+    using pointer = int*;
+    using iterator_category = std::forward_iterator_tag;
+     
+    RowVecIterator(Matrix& mat, int row, int col);
+
+    RowVecIterator& operator++();
+    RowVecIterator operator++(int);
+
+    reference operator*();
+
+    RowVecIterator begin() { return RowVecIterator(mat, row, 0); }
+    RowVecIterator end() { return RowVecIterator(mat, row, mat.get_width()); }
+    
+    friend bool operator==(const RowVecIterator& lhs, const RowVecIterator& rhs);    
+    friend bool operator!=(const RowVecIterator& lhs, const RowVecIterator& rhs);    
+
+   private:
+    
+    Matrix& mat;
+    int row;
+    int col;
+  };
+
+  class RowIterator {
+
+   public:
+     
+    using value_type = RowVecIterator;
+    using difference_type = std::ptrdiff_t; 
+    using reference = RowVecIterator&;
+    using pointer = RowVecIterator*;
+    using iterator_category = std::input_iterator_tag;
+
+    RowIterator(Matrix& mat, int row);
+
+    RowIterator& operator++();
+    RowIterator operator++(int);
+
+    value_type operator*();
+
+    friend bool operator==(const RowIterator& lhs, const RowIterator& rhs);    
+    friend bool operator!=(const RowIterator& lhs, const RowIterator& rhs);    
+
+   private:
+
+    Matrix& mat;
+    int row;
+    int col;
+  };
+
+  using row_iterator = RowIterator;
+  using const_row_iterator =  RowIterator;
+
+  row_iterator row_begin(int row_index);
+  row_iterator row_end();
+  const_row_iterator row_cbegin(int row_index) const;
+  const_row_iterator row_cend() const;
+
+  friend bool operator==(const Matrix& lhs, const Matrix& rhs);    
+  friend bool operator!=(const Matrix& lhs, const Matrix& rhs);    
+
  private:
+  
   int width;
   int height;
 
- public:
   std::vector<int> data;
 };
 
@@ -72,18 +145,6 @@ class Matrix{
 //           by a newline. This means there will be an "extra" space at
 //           the end of each line.
 void Matrix_print(const Matrix& mat, std::ostream& os);
-
-
-// REQUIRES: ptr points to an element in the Matrix
-// EFFECTS:  Returns the row of the element pointed to by ptr.
-int Matrix_row(const Matrix& mat, const int* ptr);
-
-
-// REQUIRES: mat points to a valid Matrix
-//           tr point to an element in the Matrix
-// EFFECTS:  Returns the column of the element pointed to by ptr.
-int Matrix_column(const Matrix& mat, const int* ptr);
-
 
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat);

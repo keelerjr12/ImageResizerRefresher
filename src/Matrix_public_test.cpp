@@ -25,8 +25,8 @@ TEST(test_matrix_basic) {
   mat.fill(0);
 
   int *ptr = &mat.at(2, 3);
-  ASSERT_EQUAL(Matrix_row(mat, ptr), 2);
-  ASSERT_EQUAL(Matrix_column(mat, ptr), 3);
+  ASSERT_EQUAL(mat.row_index(*ptr), 2);
+  ASSERT_EQUAL(mat.col_index(*ptr), 3);
   ASSERT_EQUAL(*ptr, 0);
   *ptr = 42;
 

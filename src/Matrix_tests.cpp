@@ -73,7 +73,7 @@ TEST(filled_matrix_element_first_row_return_first_row) {
   mat.fill(5);
   auto el = &mat.at(0, 0);
 
-  ASSERT_EQUAL(Matrix_row(mat, el), 0);
+  ASSERT_EQUAL(mat.row_index(*el), 0);
 }
 
 // Return last row of specified element
@@ -85,7 +85,7 @@ TEST(filled_matrix_element_last_row_return_last_row) {
   mat.fill(5);
   auto el = &mat.at(height-1, 0);
 
-  ASSERT_EQUAL(Matrix_row(mat, el), height-1);
+  ASSERT_EQUAL(mat.row_index(*el), height-1);
 }
 
 // Return first column of specified element
@@ -97,7 +97,7 @@ TEST(filled_matrix_element_first_column_return_first_column) {
   mat.fill(5);
   auto el = &mat.at(0, 0);
 
-  ASSERT_EQUAL(Matrix_column(mat, el), 0);
+  ASSERT_EQUAL(mat.col_index(*el), 0);
 }
 
 // Return last column of specified element
@@ -109,7 +109,7 @@ TEST(filled_matrix_element_last_column_return_last_column) {
   mat.fill(5);
   auto el = &mat.at(height-1, width-1);
 
-  ASSERT_EQUAL(Matrix_column(mat, el), width-1);
+  ASSERT_EQUAL(mat.col_index(*el), width-1);
 }
 
 // Verify that Matrix_at changes value 
