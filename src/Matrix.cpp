@@ -6,6 +6,8 @@
 #include <limits>
 #include <memory>
 
+bool in_bounds(const Matrix& mat, int row, int col);
+
 /********** Matrix ********
  *
  */
@@ -25,15 +27,13 @@ Matrix::Matrix(const Matrix& rhs) : width(rhs.width), height(rhs.height),
 // EFFECTS:  Returns a reference to the element in the Matrix
 //           at the given row and column.
 int& Matrix::at(int row, int column) {
-  assert(0 <= row && row <= get_height());
-  assert(0 <= column && column <= get_width());
+  assert(in_bounds(*this, row, column));
 
   return data[row * get_width() + column];
 }
 
 const int& Matrix::at(int row, int column) const {
-  assert(0 <= row && row <= get_height());
-  assert(0 <= column && column <= get_width());
+  assert(in_bounds(*this, row, column));
   
   return data[row * get_width() + column];
 }
@@ -203,8 +203,8 @@ int Matrix_max(const Matrix& mat) {
 //           the leftmost one.
 int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
                                       int column_start, int column_end) {
-  assert(0 <= row && row < mat.get_height());
-  assert(0 <= column_start && column_end <= mat.get_width());
+  assert(in_bounds(mat, row, column_start));
+  assert(in_bounds(mat, row, column_end-1));
   assert(column_start < column_end);
 
   auto row_it = mat.row_cbegin(row);
@@ -230,3 +230,13 @@ int Matrix_min_value_in_row(const Matrix& mat, int row,
 
     return mat.at(row, min_col);
 }
+
+bool in_bounds(const Matrix& mat, int row, int col) {
+  if (row < 0 || row >= mat.get_height())
+    return false;
+
+  if (col < 0 || col >= mat.get_width())
+    return false;
+
+  return true;
+} 
