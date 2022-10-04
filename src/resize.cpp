@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Matrix.h"
 
+using namespace MatrixNS;
+
 int main() {
   auto mat = Matrix(5, 5);
   Matrix_fill(mat, 10);
@@ -28,12 +30,14 @@ int main() {
   mat.at(2, 4) = 333;
 
   for (auto row = mat.row_begin(0); row != mat.row_end(); ++row) {
-    for (auto el : *row) {
+    for (const auto &el : *row) {
       std::cout << el << ' ';
     }
 
     std::cout << '\n';
   }
+
+  mat.at(4, 4) = 333;
 
   Matrix_print(mat, std::cout);
 

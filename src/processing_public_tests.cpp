@@ -12,6 +12,7 @@
 #include "Image_test_helpers.h"
 
 using namespace std;
+using namespace MatrixNS;
 
 void test_all(string prefix, int sizes[], int num_sizes);
 void test_rotate(const Image *img, string prefix);

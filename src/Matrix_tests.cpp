@@ -7,6 +7,7 @@
 #include <sstream>
 
 using namespace std;
+using namespace MatrixNS;
 
 // Fills a 3x5 Matrix with a value and checks
 // that Matrix_at returns that value for each element.

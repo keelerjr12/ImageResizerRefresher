@@ -5,6 +5,8 @@
 #include <memory>
 #include "Matrix.h"
 
+using namespace MatrixNS;
+
 // REQUIRES: 0 < width && width <= MAX_MATRIX_WIDTH
 //           0 < height && height <= MAX_MATRIX_HEIGHT
 // MODIFIES: this

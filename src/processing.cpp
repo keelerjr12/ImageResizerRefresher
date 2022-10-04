@@ -5,6 +5,7 @@
 #include "processing.h"
 
 using namespace std;
+using namespace MatrixNS;
 
 // v DO NOT CHANGE v ------------------------------------------------
 // The implementation of rotate_left is provided for you.

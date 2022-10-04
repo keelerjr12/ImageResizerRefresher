@@ -55,9 +55,9 @@ class Image {
   int width;
   int height;
 
-  Matrix red_channel;
-  Matrix green_channel;
-  Matrix blue_channel;
+  MatrixNS::Matrix red_channel;
+  MatrixNS::Matrix green_channel;
+  MatrixNS::Matrix blue_channel;
 };
 
 

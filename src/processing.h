@@ -23,7 +23,7 @@ void rotate_right(Image* img);
 //           size as the given Image, and then the energy matrix for that
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
-Matrix compute_energy_matrix(const Image* img);
+MatrixNS::Matrix compute_energy_matrix(const Image* img);
 
 // REQUIRES: energy points to a valid Matrix.
 // MODIFIES: 
@@ -32,7 +32,7 @@ Matrix compute_energy_matrix(const Image* img);
 //           size as the given energy Matrix, and then the cost matrix is
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
-Matrix compute_vertical_cost_matrix(const Matrix* energy);
+MatrixNS::Matrix compute_vertical_cost_matrix(const MatrixNS::Matrix* energy);
 
 // REQUIRES: cost points to a valid Matrix
 //           seam points to an array
@@ -47,7 +47,7 @@ Matrix compute_vertical_cost_matrix(const Matrix* energy);
 //           tie for lowest cost, the leftmost one (i.e. with the lowest
 //           column number) is used.
 //           See the project spec for details on computing the minimal seam.
-void find_minimal_vertical_seam(const Matrix* cost, int seam[]);
+void find_minimal_vertical_seam(const MatrixNS::Matrix* cost, int seam[]);
 
 // REQUIRES: img points to a valid Image
 //           Image_width(img) >= 2

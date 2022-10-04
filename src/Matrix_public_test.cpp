@@ -6,7 +6,7 @@
 #include <sstream>
 
 using std::ostringstream;
-
+using namespace MatrixNS;
 
 // This is the public Matrix test for which the autograder gives feedback.
 // It only tests VERY FEW of the expected behaviors of the Matrix module.

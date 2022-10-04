@@ -7,6 +7,8 @@
 
 #include "Matrix_test_helpers.h"
 
+using namespace MatrixNS;
+
 bool Matrix_equal(const Matrix& mat1, const Matrix& mat2){
   if (mat1.get_width() != mat2.get_width()){ return false; }
   if (mat1.get_height() != mat2.get_height()){ return false; }
