@@ -52,9 +52,9 @@ void Image::set_pixel(int row, int column, const Pixel& color) {
 // MODIFIES: this
 // EFFECTS:  Sets each pixel in the image to the given color.
 void Image::fill(const Pixel& color) {
-  red_channel.fill(color.r);
-  green_channel.fill(color.g);
-  blue_channel.fill(color.b);
+  Matrix_fill(red_channel, color.r);
+  Matrix_fill(green_channel, color.g);
+  Matrix_fill(blue_channel, color.b);
 }
 
 

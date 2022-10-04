@@ -22,7 +22,7 @@ TEST(test_matrix_basic) {
   ASSERT_EQUAL(mat.get_width(), 5);
   ASSERT_EQUAL(mat.get_height(), 5);
 
-  mat.fill(0);
+  Matrix_fill(mat, 0);
 
   int *ptr = &mat.at(2, 3);
   ASSERT_EQUAL(mat.row_index(*ptr), 2);

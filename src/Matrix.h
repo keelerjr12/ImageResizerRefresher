@@ -44,7 +44,7 @@ class Matrix{
   
   // MODIFIES: Data vector
   // EFFECTS:  Sets each element of the Matrix to the given value.
-  void fill(int value);
+  // void fill(int value);
   
   // MODIFIES: Data vector
   // EFFECTS:  Sets each element on the border of the Matrix to
@@ -66,26 +66,32 @@ class Matrix{
 
     using value_type = int; 
     using difference_type = std::ptrdiff_t; 
-    using reference = int&; 
+    using reference = const int&; 
     using pointer = int*;
     using iterator_category = std::forward_iterator_tag;
      
-    RowVecIterator(Matrix& mat, int row, int col);
+    RowVecIterator(const Matrix& mat, int row, int col);
+
+    RowVecIterator& operator+=(difference_type n);
 
     RowVecIterator& operator++();
     RowVecIterator operator++(int);
 
     reference operator*();
 
-    RowVecIterator begin() { return RowVecIterator(mat, row, 0); }
-    RowVecIterator end() { return RowVecIterator(mat, row, mat.get_width()); }
-    
+    RowVecIterator begin() { return RowVecIterator(*mat, row, 0); }
+    RowVecIterator end() { return RowVecIterator(*mat, row, mat->get_width()); }
+    RowVecIterator cbegin() const { return RowVecIterator(*mat, row, 0); }
+    RowVecIterator cend() const { return RowVecIterator(*mat, row, mat->get_width()); }
+
     friend bool operator==(const RowVecIterator& lhs, const RowVecIterator& rhs);    
     friend bool operator!=(const RowVecIterator& lhs, const RowVecIterator& rhs);    
 
+    friend RowVecIterator operator+(const RowVecIterator& x, difference_type n);
+
    private:
     
-    Matrix& mat;
+    const Matrix* mat;
     int row;
     int col;
   };
@@ -100,19 +106,19 @@ class Matrix{
     using pointer = RowVecIterator*;
     using iterator_category = std::input_iterator_tag;
 
-    RowIterator(Matrix& mat, int row);
+    RowIterator(const Matrix& mat, int row);
 
     RowIterator& operator++();
     RowIterator operator++(int);
 
-    value_type operator*();
+    value_type operator*() const;
 
     friend bool operator==(const RowIterator& lhs, const RowIterator& rhs);    
     friend bool operator!=(const RowIterator& lhs, const RowIterator& rhs);    
 
    private:
 
-    Matrix& mat;
+    const Matrix& mat;
     int row;
     int col;
   };
@@ -136,6 +142,9 @@ class Matrix{
   std::vector<int> data;
 };
 
+// MODIFIES: Matrix mat
+// EFFECTS:  Sets each element of the Matrix to the given value.
+void Matrix_fill(Matrix& mat, int value);
 
 // MODIFIES: os
 // EFFECTS:  First, prints the width and height for the Matrix to os:

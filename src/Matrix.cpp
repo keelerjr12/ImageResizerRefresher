@@ -1,5 +1,6 @@
 // Project UID af1f95f547e44c8ea88730dfb185559d
 #include "Matrix.h"
+#include <algorithm>
 #include <cassert>
 #include <iterator>
 #include <limits>
@@ -11,15 +12,11 @@
 
 // EFFECTS:  Initializes this as a Matrix with the given width and height.
 Matrix::Matrix(int width, int height) : width(width), height(height), 
-    data(width * height) {
+    data(width * height, 0) { }
 
-  fill(0);
-}
-
-// EFFECTS:  this as a Matrix with the given width and height.
+// EFFECTS:  Initializes this as a Matrix by copying the input matrix
 Matrix::Matrix(const Matrix& rhs) : width(rhs.width), height(rhs.height),
-    data(rhs.data) {
-}
+    data(rhs.data) { }
 
 // REQUIRES: 0 <= row && row < mat->get_height()
 //           0 <= column && column < mat->get_width()
@@ -52,15 +49,6 @@ int Matrix::col_index(const int& el) const {
 }
 
 // MODIFIES: Data vector
-// EFFECTS:  Sets each element of the Matrix to the given value.
-void Matrix::fill(int value) {
-  for (auto &el : data)
-  {
-    el = value;
-  }
-}
-
-// MODIFIES: Data vector
 // EFFECTS:  Sets each element on the border of the Matrix to
 //           the given value. These are all elements in the first/last
 //           row or the first/last column.
@@ -83,7 +71,12 @@ void Matrix::fill_border(int value) {
  *
  */
 
-Matrix::RowVecIterator::RowVecIterator(Matrix& mat, int row, int col) : mat(mat), row(row), col(col) { }
+Matrix::RowVecIterator::RowVecIterator(const Matrix& mat, int row, int col) : mat(&mat), row(row), col(col) { }
+
+Matrix::RowVecIterator& Matrix::RowVecIterator::operator+=(Matrix::RowVecIterator::difference_type n) {
+  this->col += n;
+  return *this;
+}
 
 Matrix::RowVecIterator& Matrix::RowVecIterator::operator++() {
   ++col;
@@ -97,7 +90,7 @@ Matrix::RowVecIterator Matrix::RowVecIterator::operator++(int) {
 }
 
 Matrix::RowVecIterator::reference Matrix::RowVecIterator::operator*() {
-  return mat.at(row, col);
+  return mat->at(row, col);
 }
 bool operator==(const Matrix::RowVecIterator& lhs, const Matrix::RowVecIterator& rhs) {
   return (lhs.mat == rhs.mat) && (lhs.row == rhs.row) && (lhs.col == rhs.col);
@@ -144,7 +137,7 @@ Matrix::row_iterator Matrix::row_begin(int row_index) {
   return row_iterator(*this, row_index);
 }
 
-Matrix::row_iterator Matrix::row_end() { // TODO: change this to take in a row_index ofw here to end
+Matrix::row_iterator Matrix::row_end() { 
   return row_iterator(*this, get_height());
 }
 
@@ -152,7 +145,7 @@ Matrix::const_row_iterator Matrix::row_cbegin(int row_index) const {
   return const_row_iterator(*this, row_index);
 }
 
-Matrix::const_row_iterator Matrix::row_cend() const { // TODO: change this to take in a row_index ofw here to end
+Matrix::const_row_iterator Matrix::row_cend() const { 
   return const_row_iterator(*this, get_height());
 }
 
@@ -162,6 +155,17 @@ bool operator==(const Matrix& lhs, const Matrix& rhs) {
 
 bool operator!=(const Matrix& lhs, const Matrix& rhs) {
   return !(lhs == rhs);
+}
+
+Matrix::RowVecIterator operator+(const Matrix::RowVecIterator& x, Matrix::RowVecIterator::difference_type n) {
+  Matrix::RowVecIterator tmp(x);
+  tmp  += n;
+  return tmp;
+}
+// MODIFIES: Matrix mat
+// EFFECTS:  Sets each element of the Matrix to the given value.
+void Matrix_fill(Matrix& mat, int value) {
+  std::fill(std::begin(mat), std::end(mat), value);
 }
 
 // MODIFIES: os
@@ -185,15 +189,7 @@ void Matrix_print(const Matrix& mat, std::ostream& os) {
 
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix& mat) {
-    auto max = std::numeric_limits<int>::min();
-
-    for (auto it = mat.cbegin(); it != mat.cend(); ++it) {
-      if (max < *it) {
-        max = *it;
-      }
-    }
-
-    return max;
+  return *std::max_element(mat.cbegin(), mat.cend());
 }
 
 // REQUIRES: 0 <= row && row < mat->get_height()
@@ -207,23 +203,15 @@ int Matrix_max(const Matrix& mat) {
 //           the leftmost one.
 int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
                                       int column_start, int column_end) {
-    assert(0 <= row && row < mat.get_height());
-    assert(0 <= column_start && column_end <= mat.get_width());
-    assert(column_start < column_end);
-    
-    auto min = mat.at(row, column_start);
-    auto min_c = column_start;
+  assert(0 <= row && row < mat.get_height());
+  assert(0 <= column_start && column_end <= mat.get_width());
+  assert(column_start < column_end);
 
-    for (auto c = column_start + 1; c < column_end; ++c) {
-       auto val = mat.at(row, c);
-       
-       if (val < min) {
-           min = val;
-           min_c = c;
-       }
-    }
+  auto row_it = mat.row_cbegin(row);
+  auto min_el = std::min_element((*row_it).cbegin() + column_start, (*row_it).cend());
+  auto min_el_idx = std::distance((*row_it).cbegin(), min_el);
 
-    return min_c;
+  return min_el_idx;
 }
 
 // REQUIRES: 0 <= row && row < mat->get_height()
@@ -238,15 +226,7 @@ int Matrix_min_value_in_row(const Matrix& mat, int row,
     assert(0 <= column_start && column_end <= mat.get_width());
     assert(column_start < column_end);
     
-    auto min = mat.at(row, column_start);
+    auto min_col = Matrix_column_of_min_value_in_row(mat, row, column_start, column_end);
 
-    for (auto c = column_start + 1; c < column_end; ++c) {
-       auto val = mat.at(row, c);
-       
-       if (val < min) {
-           min = val;
-       }
-    }
-
-    return min;
+    return mat.at(row, min_col);
 }

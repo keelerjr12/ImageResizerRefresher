@@ -3,7 +3,7 @@
 
 int main() {
   auto mat = Matrix(5, 5);
-  mat.fill(10);
+  Matrix_fill(mat, 10);
 
 //  for (Matrix::RowIterator it = mat.row_begin(1); it != mat.row_end(); ++it) {
 //    for (auto vit = (*it).begin(); vit != (*it).end(); ++vit) {
@@ -34,6 +34,8 @@ int main() {
 
     std::cout << '\n';
   }
+
+  Matrix_print(mat, std::cout);
 
   return 0;
 }
