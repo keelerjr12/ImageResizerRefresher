@@ -12,6 +12,7 @@
 #include "Image_test_helpers.h"
 
 using namespace std;
+using namespace ImageNS;
 using namespace MatrixNS;
 
 void test_all(string prefix, int sizes[], int num_sizes);
@@ -208,7 +209,7 @@ static Matrix load_matrix(string filename){
 
 static void write_matrix(const Matrix* mat, string filename){
   ofstream fout(filename.c_str());
-  Matrix_print(*mat, fout);
+  print(*mat, fout);
 }
 
 static Image load_image(string filename){
@@ -220,7 +221,7 @@ static Image load_image(string filename){
     exit(EXIT_FAILURE);
   }
 
-  auto img = image_from_stream(fin);
+  auto img = from_stream(fin);
 
   return img;
 }
@@ -228,7 +229,7 @@ static Image load_image(string filename){
 
 static void write_image(const Image* img, string filename){
   ofstream fout(filename.c_str());
-  Image_print(*img, fout);
+  print(*img, fout);
 }
 
 static void load_seam(int seam[], string filename){

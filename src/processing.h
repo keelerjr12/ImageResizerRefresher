@@ -9,12 +9,12 @@
 // REQUIRES: img points to a valid Image
 // MODIFIES: *img
 // EFFECTS:  The image is rotated 90 degrees to the left (counterclockwise).
-void rotate_left(Image* img);
+void rotate_left(ImageNS::Image* img);
 
 // REQUIRES: img points to a valid Image.
 // MODIFIES: *img
 // EFFECTS:  The image is rotated 90 degrees to the right (clockwise).
-void rotate_right(Image* img);
+void rotate_right(ImageNS::Image* img);
 
 // REQUIRES: img points to a valid Image.
 // MODIFIES: 
@@ -23,7 +23,7 @@ void rotate_right(Image* img);
 //           size as the given Image, and then the energy matrix for that
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
-MatrixNS::Matrix compute_energy_matrix(const Image* img);
+MatrixNS::Matrix compute_energy_matrix(const ImageNS::Image* img);
 
 // REQUIRES: energy points to a valid Matrix.
 // MODIFIES: 
@@ -60,14 +60,14 @@ void find_minimal_vertical_seam(const MatrixNS::Matrix* cost, int seam[]);
 //           removed from row r will be the one with column equal to seam[r].
 //           The width of the image will be one less than before.
 //           See the project spec for details on removing a vertical seam.
-void remove_vertical_seam(Image *img, const int seam[]);
+void remove_vertical_seam(ImageNS::Image *img, const int seam[]);
 
 // REQUIRES: img points to a valid Image
 //           0 < newWidth <= Image_width(img)
 // MODIFIES: *img
 // EFFECTS:  Reduces the width of the given Image to be newWidth by using
 //           the seam carving algorithm. See the spec for details.
-void seam_carve_width(Image *img, int newWidth);
+void seam_carve_width(ImageNS::Image *img, int newWidth);
 
 // REQUIRES: img points to a valid Image
 //           0 < newHeight <= Image_height(img)
@@ -76,7 +76,7 @@ void seam_carve_width(Image *img, int newWidth);
 // NOTE:     This is equivalent to first rotating the Image 90 degrees left,
 //           then applying seam_carve_width(img, newHeight), then rotating
 //           90 degrees right.
-void seam_carve_height(Image *img, int newHeight);
+void seam_carve_height(ImageNS::Image *img, int newHeight);
 
 // REQUIRES: img points to a valid Image
 //           0 < newWidth <= Image_width(img)
@@ -86,7 +86,7 @@ void seam_carve_height(Image *img, int newHeight);
 //           and newHeight, respectively.
 // NOTE:     This is equivalent to applying seam_carve_width(img, newWidth)
 //           and then applying seam_carve_height(img, newHeight).
-void seam_carve(Image *img, int newWidth, int newHeight);
+void seam_carve(ImageNS::Image *img, int newWidth, int newHeight);
 
 
 #endif // PROCESSING_H

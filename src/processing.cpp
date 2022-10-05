@@ -5,6 +5,7 @@
 #include "processing.h"
 
 using namespace std;
+using namespace ImageNS;
 using namespace MatrixNS;
 
 // v DO NOT CHANGE v ------------------------------------------------
@@ -87,31 +88,26 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
 Matrix compute_energy_matrix(const Image* img) {
-    assert(img);
+  assert(img);
 
-    auto energy = Matrix(img->get_width(), img->get_height());
-
-    auto max = std::numeric_limits<int>::min();
+  auto energy = Matrix(img->get_width(), img->get_height());
     
-    for (auto r = 1; r < energy.get_height() - 1; ++r) {
-        for (auto c = 1; c < energy.get_width() - 1; ++c) {
-            auto pixel_n = img->get_pixel(r-1, c); 
-            auto pixel_s = img->get_pixel(r+1, c); 
-            auto pixel_w = img->get_pixel(r, c-1); 
-            auto pixel_e = img->get_pixel(r, c+1); 
+  for (auto r = 1; r < energy.get_height() - 1; ++r) {
+    for (auto c = 1; c < energy.get_width() - 1; ++c) {
+      const auto pixel_n = img->get_pixel(r-1, c); 
+      const auto pixel_s = img->get_pixel(r+1, c); 
+      const auto pixel_w = img->get_pixel(r, c-1); 
+      const auto pixel_e = img->get_pixel(r, c+1); 
 
-            auto e = squared_difference(pixel_n, pixel_s) + squared_difference(pixel_w, pixel_e);
-            energy.at(r, c) = e;
-
-            if (e > max) {
-                max = e;
-            }
-        }
+      const auto e = squared_difference(pixel_n, pixel_s) + squared_difference(pixel_w, pixel_e);
+      energy.at(r, c) = e;
     }
+  }
 
-    energy.fill_border(max);
+  const auto max =  MatrixNS::max(energy);
+  energy.fill_border(max);
 
-    return energy;
+  return energy;
 }
 
 
@@ -123,33 +119,33 @@ Matrix compute_energy_matrix(const Image* img) {
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
 Matrix compute_vertical_cost_matrix(const Matrix* energy) {
-    assert(energy);
+  assert(energy);
 
-    auto cost = Matrix(energy->get_width(), energy->get_height());
+  auto cost = Matrix(energy->get_width(), energy->get_height());
 
-    // compute 1st row
-    for (auto c = 0; c < energy->get_width(); ++c) {
-        cost.at(0, c) = energy->at(0, c);
+  // compute 1st row
+  for (auto c = 0; c < energy->get_width(); ++c) {
+      cost.at(0, c) = energy->at(0, c);
+  }
+
+  // compute subsequent rows
+  for (auto r = 1; r < energy->get_height(); ++r) {
+    // compute 0th col
+    auto min_cost = min_value_in_row(cost, r-1, 0, 2);
+    cost.at(r, 0) = energy->at(r, 0) + min_cost;
+
+    // compute middle cols
+    for (auto c = 1; c < energy->get_width()-1; ++c) {
+      min_cost = min_value_in_row(cost, r-1, c-1, c+2);
+      cost.at(r, c) = energy->at(r, c) + min_cost;
     }
+    
+    // compute last col
+    min_cost = min_value_in_row(cost, r-1, energy->get_width()-2, energy->get_width());
+    cost.at(r, energy->get_width()-1) = energy->at(r, energy->get_width()-1) + min_cost;
+  }
 
-    // compute subsequent rows
-    for (auto r = 1; r < energy->get_height(); ++r) {
-        // compute 0th col
-        auto min_cost = Matrix_min_value_in_row(cost, r-1, 0, 2);
-        cost.at(r, 0) = energy->at(r, 0) + min_cost;
-
-        // compute middle cols
-        for (auto c = 1; c < energy->get_width()-1; ++c) {
-            min_cost = Matrix_min_value_in_row(cost, r-1, c-1, c+2);
-            cost.at(r, c) = energy->at(r, c) + min_cost;
-        }
-        
-        // compute last col
-        min_cost = Matrix_min_value_in_row(cost, r-1, energy->get_width()-2, energy->get_width());
-        cost.at(r, energy->get_width()-1) = energy->at(r, energy->get_width()-1) + min_cost;
-    }
-
-    return cost;
+  return cost;
 }
 
 

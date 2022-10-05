@@ -7,6 +7,8 @@
 
 #include "Image_test_helpers.h"
 
+using namespace ImageNS;
+
 bool Pixel_equal(Pixel p1, Pixel p2){
   return p1.r == p2.r && p1.g == p2.g && p1.b == p2.b;
 }

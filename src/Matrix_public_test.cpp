@@ -22,7 +22,7 @@ TEST(test_matrix_basic) {
   ASSERT_EQUAL(mat.get_width(), 5);
   ASSERT_EQUAL(mat.get_height(), 5);
 
-  Matrix_fill(mat, 0);
+  fill(mat, 0);
 
   int *ptr = &mat.at(2, 3);
   ASSERT_EQUAL(mat.row_index(*ptr), 2);
@@ -36,7 +36,7 @@ TEST(test_matrix_basic) {
   mat.fill_border(2);
   ASSERT_EQUAL(mat.at(0, 0), 2);
 
-  ASSERT_EQUAL(Matrix_max(mat), 42);
+  ASSERT_EQUAL(max(mat), 42);
 }
 
 TEST(test_matrix_print) {
@@ -47,7 +47,7 @@ TEST(test_matrix_print) {
   expected << "1 1\n"
            << "42 \n";
   ostringstream actual;
-  Matrix_print(mat, actual);
+  print(mat, actual);
   ASSERT_EQUAL(expected.str(), actual.str());
 }
 

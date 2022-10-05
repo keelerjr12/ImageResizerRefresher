@@ -15,11 +15,11 @@ namespace MatrixNS {
 
   // EFFECTS:  Initializes this as a Matrix with the given width and height.
   Matrix::Matrix(int width, int height) : width(width), height(height), 
-      data(width * height, 0) { }
+    data(width * height, 0) { }
 
   // EFFECTS:  Initializes this as a Matrix by copying the input matrix
   Matrix::Matrix(const Matrix& rhs) : width(rhs.width), height(rhs.height),
-      data(rhs.data) { }
+    data(rhs.data) { }
 
   // REQUIRES: 0 <= row && row < mat->get_height()
   //           0 <= column && column < mat->get_width()
@@ -118,6 +118,18 @@ namespace MatrixNS {
     return tmp;
   }
 
+  Matrix::RowIterator Matrix::RowIterator::operator+(const Matrix::RowIterator::difference_type n) {
+    auto tmp(*this);
+    tmp.row += n;
+    return tmp;
+  }
+
+  Matrix::RowIterator Matrix::RowIterator::operator-(const Matrix::RowIterator::difference_type n) {
+    auto tmp(*this);
+    tmp.row -= n;
+    return tmp;
+  }
+
   Matrix::RowIterator::value_type Matrix::RowIterator::operator*() const {
     return RowVecIterator(mat, row, col);
   }
@@ -134,16 +146,16 @@ namespace MatrixNS {
    *
    */
 
-  Matrix::row_iterator Matrix::row_begin(int row_index) {
-    return row_iterator(*this, row_index);
+  Matrix::row_iterator Matrix::row_begin() {
+    return row_iterator(*this, 0);
   }
 
   Matrix::row_iterator Matrix::row_end() { 
     return row_iterator(*this, get_height());
   }
 
-  Matrix::const_row_iterator Matrix::row_cbegin(int row_index) const {
-    return const_row_iterator(*this, row_index);
+  Matrix::const_row_iterator Matrix::row_cbegin() const {
+    return const_row_iterator(*this, 0);
   }
 
   Matrix::const_row_iterator Matrix::row_cend() const { 
@@ -165,7 +177,7 @@ namespace MatrixNS {
   }
   // MODIFIES: Matrix mat
   // EFFECTS:  Sets each element of the Matrix to the given value.
-  void Matrix_fill(Matrix& mat, int value) {
+  void fill(Matrix& mat, int value) {
     std::fill(std::begin(mat), std::end(mat), value);
   }
 
@@ -176,20 +188,20 @@ namespace MatrixNS {
   //           Each element is followed by a space and each row is followed
   //           by a newline. This means there will be an "extra" space at
   //           the end of each line.
-  void Matrix_print(const Matrix& mat, std::ostream& os) {
+  void print(const Matrix& mat, std::ostream& os) {
     os << mat.get_width() << " " <<  mat.get_height() << std::endl;
 
-    for (auto row = mat.row_cbegin(0); row != mat.row_cend(); ++row) {
+    for (auto row = mat.row_cbegin(); row != mat.row_cend(); ++row) {
       for (const auto &el : *row) {
-        std::cout << el << ' ';
+        os << el << ' ';
       }
 
-      std::cout << '\n';
+      os << '\n';
     }
   }
 
   // EFFECTS:  Returns the value of the maximum element in the Matrix
-  int Matrix_max(const Matrix& mat) {
+  int max(const Matrix& mat) {
     return *std::max_element(mat.cbegin(), mat.cend());
   }
 
@@ -202,14 +214,15 @@ namespace MatrixNS {
   //           column_end (exclusive).
   //           If multiple elements are minimal, returns the column of
   //           the leftmost one.
-  int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
-                                        int column_start, int column_end) {
+  int column_of_min_value_in_row(const Matrix& mat, int row, int column_start,
+                                 int column_end) {
+
     assert(in_bounds(mat, row, column_start));
     assert(in_bounds(mat, row, column_end-1));
     assert(column_start < column_end);
 
-    auto row_it = mat.row_cbegin(row);
-    auto min_el = std::min_element((*row_it).cbegin() + column_start, (*row_it).cend());
+    auto row_it = mat.row_cbegin() + row;
+    auto min_el = std::min_element((*row_it).cbegin() + column_start, (*row_it).cbegin() + column_end);
     auto min_el_idx = std::distance((*row_it).cbegin(), min_el);
 
     return min_el_idx;
@@ -221,13 +234,14 @@ namespace MatrixNS {
   // EFFECTS:  Returns the minimal value in a particular region. The region
   //           is defined as elements in the given row and between
   //           column_start (inclusive) and column_end (exclusive).
-  int Matrix_min_value_in_row(const Matrix& mat, int row,
-                              int column_start, int column_end) {
+  int min_value_in_row(const Matrix& mat, int row, int column_start, 
+                       int column_end) {
+
     assert(in_bounds(mat, row, column_start));
     assert(in_bounds(mat, row, column_end-1));
     assert(column_start < column_end);
       
-    auto min_col = Matrix_column_of_min_value_in_row(mat, row, column_start, column_end);
+    auto min_col = column_of_min_value_in_row(mat, row, column_start, column_end);
 
     return mat.at(row, min_col);
   }

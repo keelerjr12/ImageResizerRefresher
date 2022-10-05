@@ -113,6 +113,9 @@ namespace MatrixNS {
       RowIterator& operator++();
       RowIterator operator++(int);
 
+      RowIterator operator+(const difference_type n);
+      RowIterator operator-(const difference_type n);
+
       value_type operator*() const;
 
       friend bool operator==(const RowIterator& lhs, const RowIterator& rhs);    
@@ -128,9 +131,9 @@ namespace MatrixNS {
     using row_iterator = RowIterator;
     using const_row_iterator =  RowIterator;
 
-    row_iterator row_begin(int row_index);
+    row_iterator row_begin();
     row_iterator row_end();
-    const_row_iterator row_cbegin(int row_index) const;
+    const_row_iterator row_cbegin() const;
     const_row_iterator row_cend() const;
 
     friend bool operator==(const Matrix& lhs, const Matrix& rhs);    
@@ -146,7 +149,7 @@ namespace MatrixNS {
 
   // MODIFIES: Matrix mat
   // EFFECTS:  Sets each element of the Matrix to the given value.
-  void Matrix_fill(Matrix& mat, int value);
+  void fill(Matrix& mat, int value);
 
   // MODIFIES: os
   // EFFECTS:  First, prints the width and height for the Matrix to os:
@@ -155,10 +158,10 @@ namespace MatrixNS {
   //           Each element is followed by a space and each row is followed
   //           by a newline. This means there will be an "extra" space at
   //           the end of each line.
-  void Matrix_print(const Matrix& mat, std::ostream& os);
+  void print(const Matrix& mat, std::ostream& os);
 
   // EFFECTS:  Returns the value of the maximum element in the Matrix
-  int Matrix_max(const Matrix& mat);
+  int max(const Matrix& mat);
 
   // REQUIRES: mat points to a valid Matrix
   //           0 <= row && row < mat->get_height()
@@ -170,8 +173,8 @@ namespace MatrixNS {
   //           column_end (exclusive).
   //           If multiple elements are minimal, returns the column of
   //           the leftmost one.
-  int Matrix_column_of_min_value_in_row(const Matrix& mat, int row,
-                                        int column_start, int column_end);
+  int column_of_min_value_in_row(const Matrix& mat, int row,
+                                 int column_start, int column_end);
 
   // REQUIRES: mat points to a valid Matrix
   //           0 <= row && row < mat->get_height()
@@ -180,8 +183,8 @@ namespace MatrixNS {
   // EFFECTS:  Returns the minimal value in a particular region. The region
   //           is defined as elements in the given row and between
   //           column_start (inclusive) and column_end (exclusive).
-  int Matrix_min_value_in_row(const Matrix& mat, int row,
-                              int column_start, int column_end);
+  int min_value_in_row(const Matrix& mat, int row, int column_start, 
+                       int column_end);
 
 }
 

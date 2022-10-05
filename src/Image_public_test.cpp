@@ -7,7 +7,7 @@
 #include <string>
 
 using std::string;
-
+using namespace ImageNS;
 
 // This is the public Image test for which the autograder gives feedback.
 // It only tests VERY FEW of the expected behaviors of the Image module.
@@ -39,12 +39,12 @@ TEST(test_image_from_and_to_stream) {
   // A very poorly behaved input PPM.
   string input = "P3 2 2\t255 255 0 0\n0\n255 0 \n0 0 255 255 255 255 \n";
   std::istringstream ss_input(input);
-  auto img = image_from_stream(ss_input);
+  auto img = from_stream(ss_input);
 
   // Should be well behaved when you print it though!
   string output_correct = "P3\n2 2\n255\n255 0 0 0 255 0 \n0 0 255 255 255 255 \n";
   std::ostringstream ss_output;
-  Image_print(img, ss_output);
+  print(img, ss_output);
   string actual = ss_output.str();
 
   ASSERT_EQUAL(actual, output_correct);

@@ -9,6 +9,7 @@
 #include <cassert>
 
 using namespace std;
+using namespace ImageNS;
 
 // Sets various pixels in a 2x2 Image and checks
 // that Image_print produces the correct output.
@@ -30,7 +31,7 @@ TEST(test_print_basic) {
 
   // Capture our output
   ostringstream s;
-  Image_print(img, s);
+  print(img, s);
 
   // Correct output
   ostringstream correct;
