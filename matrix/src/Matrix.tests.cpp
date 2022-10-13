@@ -1,13 +1,46 @@
-// Project UID af1f95f547e44c8ea88730dfb185559d
-
 #include "Matrix.h"
 #include "Matrix_test_helpers.h"
-#include "unit_test_framework.h"
+#include "../../unit_test_framework/unit_test_framework.h"
 #include <cstring>
 #include <sstream>
 
 using namespace std;
 using namespace MatrixNS;
+
+TEST(test_matrix_basic) {
+  auto mat = Matrix(5, 5);
+
+  ASSERT_EQUAL(mat.get_width(), 5);
+  ASSERT_EQUAL(mat.get_height(), 5);
+
+  fill(mat, 0);
+
+  int *ptr = &mat.at(2, 3);
+  ASSERT_EQUAL(mat.row_index(*ptr), 2);
+  ASSERT_EQUAL(mat.col_index(*ptr), 3);
+  ASSERT_EQUAL(*ptr, 0);
+  *ptr = 42;
+
+  const int *cptr = &mat.at(2, 3);
+  ASSERT_EQUAL(*cptr, 42);
+
+  mat.fill_border(2);
+  ASSERT_EQUAL(mat.at(0, 0), 2);
+
+  ASSERT_EQUAL(max(mat), 42);
+}
+
+TEST(test_matrix_print) {
+  auto mat = Matrix(1, 1);
+
+  mat.at(0, 0) = 42;
+  ostringstream expected;
+  expected << "1 1\n"
+           << "42 \n";
+  ostringstream actual;
+  print(mat, actual);
+  ASSERT_EQUAL(expected.str(), actual.str());
+}
 
 // Fills a 3x5 Matrix with a value and checks
 // that at returns that value for each element.
