@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <iostream>
-#include <iterator>
 #include <vector>
 
 namespace MatrixNS {
@@ -19,9 +18,6 @@ namespace MatrixNS {
        
     // EFFECTS:  Initializes this as a Matrix with the given width and height.
     Matrix(int width, int height);
-
-    // EFFECTS:  this as a Matrix with the given width and height.
-    Matrix(const Matrix& rhs);
     
     // EFFECTS:  Returns the width of the Matrix.
     int get_width() const { return width; }

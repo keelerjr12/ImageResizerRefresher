@@ -5,7 +5,7 @@
 CXX ?= g++
 
 # Compiler flags
-CXXFLAGS ?= --std=c++11 -Wall -Werror -pedantic -g -Wno-sign-compare -Wno-comment
+CXXFLAGS ?= --std=c++20 -Wall -Werror -pedantic -g -Wno-sign-compare -Wno-comment
 
 # Directories
 SRC ?= src
@@ -73,7 +73,7 @@ style :
     -max-priority-2 0 \
     -max-priority-3 0 \
     $(FILES) \
-    -- -xc++ --std=c++11
+    -- -xc++ --std=c++20
 	$(CPD) \
     --minimum-tokens 100 \
     --language cpp \

@@ -1,9 +1,9 @@
 #include "Matrix.h"
 #include <algorithm>
 #include <cassert>
-#include <iterator>
 #include <limits>
 #include <memory>
+#include <ranges>
 
 namespace MatrixNS {
 
@@ -13,20 +13,9 @@ namespace MatrixNS {
    *
    */
 
-  // EFFECTS:  Initializes this as a Matrix with the given width and height.
   Matrix::Matrix(int width, int height) : width(width), height(height), 
     data(width * height, 0) { }
 
-  // EFFECTS:  Initializes this as a Matrix by copying the input matrix
-  Matrix::Matrix(const Matrix& rhs) : width(rhs.width), height(rhs.height),
-    data(rhs.data) { }
-
-  // REQUIRES: 0 <= row && row < mat->get_height()
-  //           0 <= column && column < mat->get_width()
-  // MODIFIES: (The returned reference may be used to modify an
-  //            element in the Matrix.)
-  // EFFECTS:  Returns a reference to the element in the Matrix
-  //           at the given row and column.
   int& Matrix::at(int row, int column) {
     assert(in_bounds(*this, row, column));
 
@@ -39,32 +28,26 @@ namespace MatrixNS {
     return data[row * get_width() + column];
   }
 
-  // EFFECTS:  Returns the row of the element pointed to by ptr.
   int Matrix::row_index(const int& el) const {
     return (&el - &data[0]) / get_width();
   }
 
-  // EFFECTS:  Returns the column of the element pointed to by ptr.
   int Matrix::col_index(const int& el) const {
     return (&el - &data[0]) % get_width();
   }
 
-  // MODIFIES: Data vector
-  // EFFECTS:  Sets each element on the border of the Matrix to
-  //           the given value. These are all elements in the first/last
-  //           row or the first/last column.
   void Matrix::fill_border(int value) {
-      // Fill top * bottoms rows
-      for (auto c = 0; c < get_width(); ++c) {
-          at(0, c) = value;
-          at(get_height() - 1, c) = value;
-      }
-      
-      // Fill left & right columns
-      for (auto r = 0; r < get_height(); ++r) {
-          at(r, 0) = value;
-          at(r, get_width() - 1) = value;
-      }
+    // Fill top * bottoms rows
+    for (auto c = 0; c < get_width(); ++c) {
+      at(0, c) = value;
+      at(get_height() - 1, c) = value;
+    }
+    
+    // Fill left & right columns
+    for (auto r = 0; r < get_height(); ++r) {
+      at(r, 0) = value;
+      at(r, get_width() - 1) = value;
+    }
   }
 
 
@@ -131,7 +114,7 @@ namespace MatrixNS {
   }
 
   Matrix::RowIterator::value_type Matrix::RowIterator::operator*() const {
-    return RowVecIterator(mat, row, col);
+    return {mat, row, col};
   }
 
   bool operator==(const Matrix::row_iterator& lhs, const Matrix::row_iterator& rhs) {
@@ -147,19 +130,19 @@ namespace MatrixNS {
    */
 
   Matrix::row_iterator Matrix::row_begin() {
-    return row_iterator(*this, 0);
+    return {*this, 0};
   }
 
   Matrix::row_iterator Matrix::row_end() { 
-    return row_iterator(*this, get_height());
+    return {*this, get_height()};
   }
 
   Matrix::const_row_iterator Matrix::row_cbegin() const {
-    return const_row_iterator(*this, 0);
+    return {*this, 0};
   }
 
   Matrix::const_row_iterator Matrix::row_cend() const { 
-    return const_row_iterator(*this, get_height());
+    return {*this, get_height()};
   }
 
   bool operator==(const Matrix& lhs, const Matrix& rhs) {
@@ -178,7 +161,7 @@ namespace MatrixNS {
   // MODIFIES: Matrix mat
   // EFFECTS:  Sets each element of the Matrix to the given value.
   void fill(Matrix& mat, int value) {
-    std::fill(std::begin(mat), std::end(mat), value);
+    std::ranges::fill(mat, value);
   }
 
   // MODIFIES: os
