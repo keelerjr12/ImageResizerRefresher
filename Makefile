@@ -20,27 +20,30 @@ test: Matrix_public_test.exe Matrix_tests.exe Image_public_test.exe Image_tests.
 	./$(BIN)/resize.exe $(DATA)/dog.ppm $(DATA)/dog_4x5.out.ppm 4 5
 	diff $(DATA)/dog_4x5.out.ppm $(DATA)/dog_4x5.correct.ppm
 
-Matrix_public_test.exe: $(SRC)/Matrix_public_test.cpp $(SRC)/Matrix.cpp $(SRC)/Matrix_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+matrix.o: ./matrix/Matrix.cpp
+	$(CXX) -c $(CXXFLAGS) $^ -o $(BIN)/$@
 
-Matrix_tests.exe: $(SRC)/Matrix_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Matrix_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+Matrix_public_test.exe: matrix/Matrix.cpp matrix/Matrix_public_test.cpp matrix/Matrix_test_helpers.cpp
+	$(CXX) $(CXXFLAGS) -Iunit_test_framework $^ -o $(BIN)/$@
 
-Image_public_test.exe: $(SRC)/Image_public_test.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp \
-			$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
-
-Image_tests.exe: $(SRC)/Image_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/Matrix_test_helpers.cpp \
-			$(SRC)/Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
-
-processing_public_tests.exe: $(SRC)/processing_public_tests.cpp $(SRC)/Matrix.cpp \
-				$(SRC)/Image.cpp $(SRC)/processing.cpp \
-				$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
-
-resize.exe: $(SRC)/resize.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/processing.cpp
-	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+#Matrix_tests.exe: $(SRC)/Matrix_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Matrix_test_helpers.cpp
+#	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+#
+#Image_public_test.exe: $(SRC)/Image_public_test.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp \
+#			$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
+#	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+#
+#Image_tests.exe: $(SRC)/Image_tests.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/Matrix_test_helpers.cpp \
+#			$(SRC)/Image_test_helpers.cpp
+#	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+#
+#processing_public_tests.exe: $(SRC)/processing_public_tests.cpp $(SRC)/Matrix.cpp \
+#				$(SRC)/Image.cpp $(SRC)/processing.cpp \
+#				$(SRC)/Matrix_test_helpers.cpp $(SRC)/Image_test_helpers.cpp
+#	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
+#
+#resize.exe: $(SRC)/resize.cpp $(SRC)/Matrix.cpp $(SRC)/Image.cpp $(SRC)/processing.cpp
+#	$(CXX) $(CXXFLAGS) $^ -o $(BIN)/$@
 
 # Disable built-in Makefile rules
 .SUFFIXES:

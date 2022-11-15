@@ -1,6 +1,6 @@
 #include "Matrix.h"
 #include "Matrix_test_helpers.h"
-#include "../../unit_test_framework/unit_test_framework.h"
+#include "unit_test_framework.h"
 #include <cstring>
 #include <sstream>
 

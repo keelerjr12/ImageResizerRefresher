@@ -158,19 +158,11 @@ namespace MatrixNS {
     tmp  += n;
     return tmp;
   }
-  // MODIFIES: Matrix mat
-  // EFFECTS:  Sets each element of the Matrix to the given value.
+
   void fill(Matrix& mat, int value) {
     std::ranges::fill(mat, value);
   }
 
-  // MODIFIES: os
-  // EFFECTS:  First, prints the width and height for the Matrix to os:
-  //             WIDTH [space] HEIGHT [newline]
-  //           Then prints the rows of the Matrix to os with one row per line.
-  //           Each element is followed by a space and each row is followed
-  //           by a newline. This means there will be an "extra" space at
-  //           the end of each line.
   void print(const Matrix& mat, std::ostream& os) {
     os << mat.get_width() << " " <<  mat.get_height() << std::endl;
 
@@ -183,20 +175,10 @@ namespace MatrixNS {
     }
   }
 
-  // EFFECTS:  Returns the value of the maximum element in the Matrix
   int max(const Matrix& mat) {
     return *std::max_element(mat.cbegin(), mat.cend());
   }
 
-  // REQUIRES: 0 <= row && row < mat->get_height()
-  //           0 <= column_start && column_end <= mat->get_width()
-  //           column_start < column_end
-  // EFFECTS:  Returns the column of the element with the minimal value
-  //           in a particular region. The region is defined as elements
-  //           in the given row and between column_start (inclusive) and
-  //           column_end (exclusive).
-  //           If multiple elements are minimal, returns the column of
-  //           the leftmost one.
   int column_of_min_value_in_row(const Matrix& mat, int row, int column_start,
                                  int column_end) {
 
@@ -211,12 +193,6 @@ namespace MatrixNS {
     return min_el_idx;
   }
 
-  // REQUIRES: 0 <= row && row < mat->get_height()
-  //           0 <= column_start && column_end <= mat->get_width()
-  //           column_start < column_end
-  // EFFECTS:  Returns the minimal value in a particular region. The region
-  //           is defined as elements in the given row and between
-  //           column_start (inclusive) and column_end (exclusive).
   int min_value_in_row(const Matrix& mat, int row, int column_start, 
                        int column_end) {
 
