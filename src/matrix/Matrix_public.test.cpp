@@ -1,6 +1,6 @@
 #include "Matrix.h"
 #include "Matrix_test_helpers.h"
-#include "../unit_test_framework/unit_test_framework.h"
+#include "unit_test_framework.h"
 #include <sstream>
 #include <algorithm>
 
@@ -16,7 +16,7 @@ using namespace MatrixNS;
 
 
 TEST(test_matrix_basic) {
-  auto mat = Matrix(5, 5);
+  Matrix mat(5, 5);
 
   ASSERT_EQUAL(mat.get_width(), 5);
   ASSERT_EQUAL(mat.get_height(), 5);
@@ -38,19 +38,16 @@ TEST(test_matrix_basic) {
 //  ASSERT_EQUAL(Matrix_max(mat), 42);
 }
 
-//TEST(test_matrix_print) {
-//  Matrix *mat = new Matrix;
-//  Matrix_init(mat, 1, 1);
-//
-//  *Matrix_at(mat, 0, 0) = 42;
-//  ostringstream expected;
-//  expected << "1 1\n"
-//           << "42 \n";
-//  ostringstream actual;
-//  Matrix_print(mat, actual);
-//  ASSERT_EQUAL(expected.str(), actual.str());
-//
-//  delete mat;
-//}
+TEST(test_matrix_print) {
+  Matrix mat (1, 1);
+
+  mat.at(0, 0) = 42;
+  ostringstream expected;
+  expected << "1 1\n"
+           << "42 \n";
+  ostringstream actual;
+  print(mat, actual);
+  ASSERT_EQUAL(expected.str(), actual.str());
+}
 
 TEST_MAIN()
