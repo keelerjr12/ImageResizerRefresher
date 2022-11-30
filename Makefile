@@ -32,10 +32,10 @@ INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 CPP_FLAGS := $(INC_FLAGS) -MMD -MP
 
 # Do actual compiling, linking, and running
-all: $(BIN_DIR)/$(PROG)
+all: $(BIN_DIR)/$(PROG).exe
 	./$^
 
-$(BIN_DIR)/$(PROG): $(PROG_OBJ) $(OBJS)
+$(BIN_DIR)/$(PROG).exe: $(PROG_OBJ) $(OBJS)
 	$(CXX) $(CPP_FLAGS) $(CXXFLAGS) $^ -o $@
 	#diff $(DATA)/dog_4x5.out.ppm $(DATA)/dog_4x5.correct.ppm
 
